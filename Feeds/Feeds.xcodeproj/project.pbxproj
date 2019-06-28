@@ -21,6 +21,8 @@
 		CF72F3F522BE2E690067C147 /* FeedsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CF72F3F422BE2E690067C147 /* FeedsTests.m */; };
 		CF72F40022BE2E690067C147 /* FeedsUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = CF72F3FF22BE2E690067C147 /* FeedsUITests.m */; };
 		CF72F41322BE30DB0067C147 /* MainPage.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CF72F41222BE30DB0067C147 /* MainPage.storyboard */; };
+		CF8276D022C651100091CBC7 /* beforelike.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = CF8276CE22C651100091CBC7 /* beforelike.jpeg */; };
+		CF8276D122C651100091CBC7 /* afterlike.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = CF8276CF22C651100091CBC7 /* afterlike.jpeg */; };
 		CF8F313222C64D2A00AAE19E /* DetailPage.m in Sources */ = {isa = PBXBuildFile; fileRef = CF8F313122C64D2A00AAE19E /* DetailPage.m */; };
 		CFAB5F0422C5C59900DE38A1 /* RegisterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CFAB5F0322C5C59900DE38A1 /* RegisterViewController.m */; };
 		CFAB5F0922C5C5B800DE38A1 /* user.jpg in Resources */ = {isa = PBXBuildFile; fileRef = CFAB5F0622C5C5B800DE38A1 /* user.jpg */; };
@@ -76,6 +78,8 @@
 		CF72F3FF22BE2E690067C147 /* FeedsUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedsUITests.m; sourceTree = "<group>"; };
 		CF72F40122BE2E690067C147 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CF72F41222BE30DB0067C147 /* MainPage.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = MainPage.storyboard; sourceTree = "<group>"; };
+		CF8276CE22C651100091CBC7 /* beforelike.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = beforelike.jpeg; sourceTree = "<group>"; };
+		CF8276CF22C651100091CBC7 /* afterlike.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = afterlike.jpeg; sourceTree = "<group>"; };
 		CF8F313022C64D2A00AAE19E /* DetailPage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailPage.h; sourceTree = "<group>"; };
 		CF8F313122C64D2A00AAE19E /* DetailPage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailPage.m; sourceTree = "<group>"; };
 		CFAB5F0222C5C59900DE38A1 /* RegisterViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RegisterViewController.h; sourceTree = "<group>"; };
@@ -179,6 +183,8 @@
 		CF72F40D22BE2ED60067C147 /* Detail */ = {
 			isa = PBXGroup;
 			children = (
+				CF8276CF22C651100091CBC7 /* afterlike.jpeg */,
+				CF8276CE22C651100091CBC7 /* beforelike.jpeg */,
 				CF8F313022C64D2A00AAE19E /* DetailPage.h */,
 				CF8F313122C64D2A00AAE19E /* DetailPage.m */,
 			);
@@ -340,10 +346,12 @@
 				CF72F41322BE30DB0067C147 /* MainPage.storyboard in Resources */,
 				CFAB5F0922C5C5B800DE38A1 /* user.jpg in Resources */,
 				CFAB5F0B22C5C5B800DE38A1 /* password.jpeg in Resources */,
+				CF8276D022C651100091CBC7 /* beforelike.jpeg in Resources */,
 				CFAB5F0A22C5C5B800DE38A1 /* confirm.jpg in Resources */,
 				CF72F3E822BE2E690067C147 /* LaunchScreen.storyboard in Resources */,
 				CF72F3E522BE2E690067C147 /* Assets.xcassets in Resources */,
 				CF72F3E322BE2E680067C147 /* Main.storyboard in Resources */,
+				CF8276D122C651100091CBC7 /* afterlike.jpeg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -110,6 +110,50 @@
     
     html = [self processImageOfHtml:html andImgUrl:img_url];
     [self.webView loadHTMLString:html baseURL:nil];
+    
+    
+    //点赞
+    self.giveLike = false;
+    
+    self.beforelike = [UIImage imageNamed:@"beforelike.jpeg"];
+    self.afterlike = [UIImage imageNamed:@"afterlike.jpeg"];
+    self.likeIcon = [[UIButton alloc] init];
+    self.likeIcon.frame = CGRectMake(130, 152, 30, 30);
+    [self.likeIcon setBackgroundImage:self.beforelike forState:UIControlStateNormal];
+    [self.likeIcon addTarget:self action:@selector(likeButtonOnClick:) forControlEvents:UIControlEventTouchDown];
+    [self.view addSubview:self.likeIcon];
+    
+    self.likeNum = [[UITextView alloc] init];
+    self.likeNum.frame = CGRectMake(170, 152, 50, 30);
+    [self.likeNum setEditable:NO];
+    [self.view addSubview:self.likeNum];
+    
+    //获取该文章当前点赞数
+    NSURLSessionConfiguration *defaultConfigObj = [NSURLSessionConfiguration defaultSessionConfiguration];
+    NSURLSession *delegateFreeSession = [NSURLSession sessionWithConfiguration:defaultConfigObj
+                                                                      delegate:self
+                                                                 delegateQueue:[NSOperationQueue mainQueue]];
+    NSURL *url_ = [NSURL URLWithString:@"http://hw.mikualpha.cn/like.php"];
+    NSMutableURLRequest * request_ = [[NSMutableURLRequest alloc]initWithURL:url_ cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10];
+    [request_ setValue:myDelegate.token forHTTPHeaderField:@"Authorization"];
+    [request_ setHTTPMethod:@"GET"];
+    NSURLSessionDataTask *dataTask = [delegateFreeSession dataTaskWithRequest:request_ completionHandler:^(NSData *data, NSURLResponse *response, NSError *error){
+            NSString* jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            NSData* jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+            NSDictionary* dic = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableLeaves error:nil];
+            NSNumber* status = [dic objectForKey:@"status"];
+            int myStatus = [status intValue];
+            
+            if (myStatus == 200){
+                NSDictionary* dataDic = [dic objectForKey:@"data"];
+                NSNumber* count = [dataDic objectForKey:@"count"];
+                self.likeNum.text = [NSString stringWithFormat:@"%@",count];
+            }else{
+                self.likeNum.text = @"0";
+            }
+        }];
+    
+    [dataTask resume];
 }
 
 - (void)onClickBack:(id)sender {
@@ -270,5 +314,93 @@
     NSLog(@"%@",message);
     completionHandler();
 }
+
+- (void)likeButtonOnClick:(UIButton*)btn {
+    if (!self.giveLike){
+        NSURL *url = [NSURL URLWithString:@"http://hw.mikualpha.cn/like.php"];
+        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+        request.HTTPMethod = @"PUT";
+        AppDelegate *myDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        [request setValue:myDelegate.token forHTTPHeaderField:@"Authorization"];
+        NSString *params = [NSString stringWithFormat:@"id=777"];
+        request.HTTPBody = [params dataUsingEncoding:NSUTF8StringEncoding];
+        
+        NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
+        NSURLSession *delegateFreeSession = [NSURLSession sessionWithConfiguration:defaultConfigObject delegate:nil delegateQueue: [NSOperationQueue mainQueue]];
+        
+        NSURLSessionDataTask *dataTask = [delegateFreeSession dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+            NSString* jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            NSData* jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+            NSDictionary* dic = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableLeaves error:nil];
+            NSNumber* status = [dic objectForKey:@"status"];
+            int myStatus = [status intValue];
+            if (myStatus == 200){
+                self.giveLike = true;
+                [self.likeIcon setBackgroundImage:self.afterlike forState:UIControlStateNormal];
+                self.likeNum.text = [NSString stringWithFormat:@"%d", [self.likeNum.text intValue]+1];
+                NSLog(@"已成功点赞");
+                
+            }else if (myStatus == 400){
+                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"消息提示" message:@"参数错误" preferredStyle:UIAlertControllerStyleAlert];
+                [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+                    NSLog(@"点击取消");
+                }]];
+                [self presentViewController:alertController animated:YES completion:nil];
+                
+            }else if (myStatus == 401){
+                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"消息提示" message:@"未登录或登录已过期" preferredStyle:UIAlertControllerStyleAlert];
+                [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+                    NSLog(@"点击取消");
+                }]];
+                [self presentViewController:alertController animated:YES completion:nil];
+            }
+        }];
+        
+        [dataTask resume];
+        
+    }else{
+        NSURL *url = [NSURL URLWithString:@"http://hw.mikualpha.cn/like.php"];
+        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+        request.HTTPMethod = @"DELETE";
+        AppDelegate *myDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        [request setValue:myDelegate.token forHTTPHeaderField:@"Authorization"];
+        NSString *params = [NSString stringWithFormat:@"id=777"];
+        request.HTTPBody = [params dataUsingEncoding:NSUTF8StringEncoding];
+        
+        NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
+        NSURLSession *delegateFreeSession = [NSURLSession sessionWithConfiguration:defaultConfigObject delegate:nil delegateQueue: [NSOperationQueue mainQueue]];
+        
+        NSURLSessionDataTask *dataTask = [delegateFreeSession dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+            NSString* jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            NSData* jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+            NSDictionary* dic = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableLeaves error:nil];
+            NSNumber* status = [dic objectForKey:@"status"];
+            int myStatus = [status intValue];
+            if (myStatus == 200){
+                self.giveLike = false;
+                [self.likeIcon setBackgroundImage:self.beforelike forState:UIControlStateNormal];
+                self.likeNum.text = [NSString stringWithFormat:@"%d", [self.likeNum.text intValue]-1];
+                NSLog(@"已取消点赞");
+                
+            }else if (myStatus == 400){
+                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"消息提示" message:@"参数错误" preferredStyle:UIAlertControllerStyleAlert];
+                [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+                    NSLog(@"点击取消");
+                }]];
+                [self presentViewController:alertController animated:YES completion:nil];
+                
+            }else if (myStatus == 401){
+                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"消息提示" message:@"未登录或登录已过期" preferredStyle:UIAlertControllerStyleAlert];
+                [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+                    NSLog(@"点击取消");
+                }]];
+                [self presentViewController:alertController animated:YES completion:nil];
+            }
+        }];
+        
+        [dataTask resume];
+    }
+}
+
 @end
 

@@ -29,7 +29,7 @@
         <!--Item 1-->
         <scene sceneID="yE2-41-FgO">
             <objects>
-                <viewController id="gGo-Uj-2Cc" sceneMemberID="viewController">
+                <viewController id="gGo-Uj-2Cc" customClass="MainPageViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="KoC-e7-LWW">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

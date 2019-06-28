@@ -103,29 +103,15 @@
     } else {
         NSLog(@"111");
         if ([[self.arrayDS objectAtIndex:indexPath.row] imgNum] == 1){
-            MainPageTableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:@"MPTVC"];
+            SingleImgCell * cell = [tableView dequeueReusableCellWithIdentifier:@"SIC"];
             if (cell == nil) {
-                cell = [[MainPageTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"MPTVC"];
+                cell = [[SingleImgCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"SIC"];
             }
             cell.title.text = [NSString stringWithFormat:@"%@", [[self.arrayDS objectAtIndex:indexPath.row] title]];
             cell.img1.image = nil;
-            cell.img2.image = nil;
-            cell.img3.image = nil;
-            if ([[self.arrayDS objectAtIndex:indexPath.row] imgNum] >= 1) {
-                NSString * urlString = [[self.arrayDS objectAtIndex:indexPath.row] imgs][0];
-                NSData * data = [NSData dataWithContentsOfURL:[NSURL URLWithString:urlString]];
-                cell.img1.image = [UIImage imageWithData:data];
-            }
-            if ([[self.arrayDS objectAtIndex:indexPath.row] imgNum] >= 2) {
-                NSString * urlString = [[self.arrayDS objectAtIndex:indexPath.row] imgs][1];
-                NSData * data = [NSData dataWithContentsOfURL:[NSURL URLWithString:urlString]];
-                cell.img2.image = [UIImage imageWithData:data];
-            }
-            if ([[self.arrayDS objectAtIndex:indexPath.row] imgNum] >= 3) {
-                NSString * urlString = [[self.arrayDS objectAtIndex:indexPath.row] imgs][2];
-                NSData * data = [NSData dataWithContentsOfURL:[NSURL URLWithString:urlString]];
-                cell.img3.image = [UIImage imageWithData:data];
-            }
+            NSString * urlString = [[self.arrayDS objectAtIndex:indexPath.row] imgs][0];
+            NSData * data = [NSData dataWithContentsOfURL:[NSURL URLWithString:urlString]];
+            cell.img1.image = [UIImage imageWithData:data];
             return cell;
         } else {
             MainPageTableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:@"MPTVC"];

@@ -7,6 +7,7 @@
 //
 
 #import "DetailPage.h"
+#import "AppDelegate.h"
 #ifndef PrefixHeader_pch
 #define PrefixHeader_pch
 
@@ -56,10 +57,16 @@
 
 
 @implementation DetailPage
+-(instancetype)initWithGroupId:(NSString*)group_id{
+    if(self = [super init]){
+        self.groupId = group_id;
+    }
+    return self;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.array = [NSArray array];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"< Back" style:UIBarButtonItemStylePlain target:self action:@selector(onClickBack:)];
     //使图片居中
     NSString* jScript = @"var meta = document.createElement('meta'); meta.setAttribute('name', 'viewport'); meta.setAttribute('content', 'width=device-width'); document.getElementsByTagName('head')[0].appendChild(meta); var imgs = document.getElementsByTagName('img');for (var i in imgs){imgs[i].style.maxWidth='100%';imgs[i].style.height='auto';}";
     WKUserScript* wkUScript = [[WKUserScript alloc]initWithSource:jScript injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES];
@@ -75,9 +82,17 @@
     
     NSURL* url = [NSURL URLWithString:@"https://i.snssdk.com/course/article_content"];
     NSMutableURLRequest* request = [[NSMutableURLRequest alloc]initWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10];
+    AppDelegate *myDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    [request setValue:myDelegate.token forHTTPHeaderField:@"Authorization"];
     [request setHTTPMethod:@"POST"];
-    NSString* str = @"groupId=q260BmEU5cED%2bKCdYKa0RQ%3d%3d";
-    NSData* data = [str dataUsingEncoding:NSUTF8StringEncoding];
+    //NSString* str = @"groupId=q260BmEU5cED%2bKCdYKa0RQ%3d%3d";
+    NSData* data;
+    if(self.groupId != nil){
+        data = [self.groupId dataUsingEncoding:NSUTF8StringEncoding];
+    }else{
+        data= [@"groupId=q260BmEU5cED%2bKCdYKa0RQ%3d%3d" dataUsingEncoding:NSUTF8StringEncoding];
+    }
+    
     [request setHTTPBody:data];
     
     NSData* received = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
@@ -91,6 +106,10 @@
     
     html = [self processImageOfHtml:html andImgUrl:img_url];
     [self.webView loadHTMLString:html baseURL:nil];
+}
+
+- (void)onClickBack:(id)sender {
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 -(NSMutableString*)processImageOfHtml:(NSMutableString*) html andImgUrl:(NSMutableString*) imgUrl{
@@ -124,12 +143,12 @@
     [self.view addSubview:self.bgView];
     
     //创建边框视图
-    UIView *borderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH-20, 240)];
+    UIView *borderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH-10, 380)];
     //将图层的边框设置为圆脚
     borderView.layer.cornerRadius = 8;
     borderView.layer.masksToBounds = YES;
     //给图层添加一个有色边框
-    borderView.layer.borderWidth = 8;
+    borderView.layer.borderWidth = 2;
     borderView.layer.borderColor = [[UIColor colorWithRed:0.9
                                                     green:0.9
                                                      blue:0.9
@@ -140,9 +159,11 @@
     //创建关闭按钮
     UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     //    [closeBtn setImage:[UIImage imageNamed:@"close.png"] forState:UIControlStateNormal];
-    closeBtn.backgroundColor = [UIColor redColor];
+    //scloseBtn.backgroundColor = [UIColor grayColor];
+    closeBtn.titleLabel.textAlignment = UITextAlignmentCenter;
     [closeBtn addTarget:self action:@selector(removeBigImage) forControlEvents:UIControlEventTouchUpInside];
-    [closeBtn setFrame:CGRectMake(borderView.frame.origin.x+borderView.frame.size.width-20, borderView.frame.origin.y-6, 26, 27)];
+    //[closeBtn setFrame:CGRectMake(borderView.frame.origin.x+borderView.frame.size.width-50, borderView.frame.origin.y-6, 50, 27)];
+    [closeBtn setFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
     [self.bgView addSubview:closeBtn];
     
     //创建显示图像视图

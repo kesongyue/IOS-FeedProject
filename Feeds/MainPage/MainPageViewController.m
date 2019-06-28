@@ -88,11 +88,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (tableView == self.selectView) {
-        return 2;
-    } else {
         return self.arrayDS.count;
-    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -107,15 +103,29 @@
     } else {
         NSLog(@"111");
         if ([[self.arrayDS objectAtIndex:indexPath.row] imgNum] == 1){
-            SingleImgCell * cell = [tableView dequeueReusableCellWithIdentifier:@"SIC"];
+            MainPageTableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:@"MPTVC"];
             if (cell == nil) {
-                cell = [[SingleImgCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"SIC"];
+                cell = [[MainPageTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"MPTVC"];
             }
             cell.title.text = [NSString stringWithFormat:@"%@", [[self.arrayDS objectAtIndex:indexPath.row] title]];
             cell.img1.image = nil;
-            NSString * urlString = [[self.arrayDS objectAtIndex:indexPath.row] imgs][0];
-            NSData * data = [NSData dataWithContentsOfURL:[NSURL URLWithString:urlString]];
-            cell.img1.image = [UIImage imageWithData:data];
+            cell.img2.image = nil;
+            cell.img3.image = nil;
+            if ([[self.arrayDS objectAtIndex:indexPath.row] imgNum] >= 1) {
+                NSString * urlString = [[self.arrayDS objectAtIndex:indexPath.row] imgs][0];
+                NSData * data = [NSData dataWithContentsOfURL:[NSURL URLWithString:urlString]];
+                cell.img1.image = [UIImage imageWithData:data];
+            }
+            if ([[self.arrayDS objectAtIndex:indexPath.row] imgNum] >= 2) {
+                NSString * urlString = [[self.arrayDS objectAtIndex:indexPath.row] imgs][1];
+                NSData * data = [NSData dataWithContentsOfURL:[NSURL URLWithString:urlString]];
+                cell.img2.image = [UIImage imageWithData:data];
+            }
+            if ([[self.arrayDS objectAtIndex:indexPath.row] imgNum] >= 3) {
+                NSString * urlString = [[self.arrayDS objectAtIndex:indexPath.row] imgs][2];
+                NSData * data = [NSData dataWithContentsOfURL:[NSURL URLWithString:urlString]];
+                cell.img3.image = [UIImage imageWithData:data];
+            }
             return cell;
         } else {
             MainPageTableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:@"MPTVC"];
@@ -143,8 +153,8 @@
             }
             return cell;
         }
-    }
     
+    }
 }
 
 
@@ -152,10 +162,6 @@
  *  设置单元格的高度
  */
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (tableView == self.selectView) {
-        NSLog(@"000");
-        return 60.0f;
-    } else {
         if ([[self.arrayDS objectAtIndex:indexPath.row] imgNum] == 0) {
             return 60.0f;
         } else if ([[self.arrayDS objectAtIndex:indexPath.row] imgNum] == 1) {
@@ -163,7 +169,7 @@
         } else {
             return 185.0f;
         }
-    }
+    
 }
 
 
@@ -172,12 +178,15 @@
  */
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (tableView == self.tableView) {
-        DetailPage* detailPage = [[DetailPage alloc]initWithGroupId:[[self.arrayDS objectAtIndex:indexPath.row] group_id]];
-        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:detailPage];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self presentViewController:navController animated:YES completion:nil];
-        });
-    }
+     DetailPage* detailPage = [[DetailPage alloc]initWithGroupId:[[self.arrayDS objectAtIndex:indexPath.row] group_id]];
+    NSLog(@"%@",[[self.arrayDS objectAtIndex:indexPath.row] group_id]);
+     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:detailPage];
+     dispatch_async(dispatch_get_main_queue(), ^{
+     [self presentViewController:navController animated:YES completion:nil];
+     });
+     }
 }
 
 @end
+
+

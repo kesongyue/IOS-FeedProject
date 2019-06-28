@@ -85,14 +85,18 @@
     AppDelegate *myDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     [request setValue:myDelegate.token forHTTPHeaderField:@"Authorization"];
     [request setHTTPMethod:@"POST"];
-    //NSString* str = @"groupId=q260BmEU5cED%2bKCdYKa0RQ%3d%3d";
+    //NSLog(@"%@",[@"groupId=q260BmEU5cED%2bKCdYKa0RQ==" stringByAddingPercentEscapesUsingEncoding:kCFStringEncodingASCII]);
+    NSMutableString* str = [[NSMutableString alloc] initWithString:@"groupId="];
+    [str appendString:self.groupId];
+    //[str appendString:@"%3d%3d"];
+    NSLog(@"%@",str);
     NSData* data;
     if(self.groupId != nil){
-        data = [self.groupId dataUsingEncoding:NSUTF8StringEncoding];
+        data = [str dataUsingEncoding:NSUTF8StringEncoding];
     }else{
         data= [@"groupId=q260BmEU5cED%2bKCdYKa0RQ%3d%3d" dataUsingEncoding:NSUTF8StringEncoding];
     }
-    
+    [request setValue: @"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
     [request setHTTPBody:data];
     
     NSData* received = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];

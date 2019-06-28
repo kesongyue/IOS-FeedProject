@@ -11,6 +11,7 @@
 @interface ModifyInfo ()
 @property(nonatomic, strong) NSString *Info;
 @property(nonatomic, strong) NSArray<NSString*> *allAttributeKeys;
+@property(nonatomic, strong) UITextField *textField;
 
 @end
 
@@ -41,16 +42,25 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
+- (IBAction)notificationMethod:(id)sender {
+    if (_textField.text != @"") {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"ChangeNameNotification" object:self userInfo:@{@"name":_textField.text}];
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }else{
+        
+    }
+}
+
 //生成控件
 - (void)setup {
     self.view.backgroundColor = UIColor.whiteColor;
     
-    UITextField * textField = [[UITextField alloc]initWithFrame:CGRectMake(20, 100, 280, 40)];
-    textField.borderStyle = UITextBorderStyleRoundedRect;
+    _textField = [[UITextField alloc]initWithFrame:CGRectMake(20, 100, 280, 40)];
+    _textField.borderStyle = UITextBorderStyleRoundedRect;
     NSString *str1 = @"请输入你的";
     NSString *str2 = [NSString stringWithFormat:@"%@%@", str1, _Info];
-    textField.placeholder = str2;
-    [self.view addSubview:textField];
+    _textField.placeholder = str2;
+    [self.view addSubview:_textField];
     
     UIButton *btn = [[UIButton alloc] initWithFrame:CGRectMake(320, 100, 80, 40)];
     [btn setBackgroundColor: [UIColor greenColor]];
@@ -59,6 +69,7 @@
     btn.titleLabel.textAlignment = NSTextAlignmentCenter;
     btn.titleLabel.font = [UIFont systemFontOfSize:19.f];
     btn.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    [btn addTarget:self action:@selector(notificationMethod:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:btn];
     
 }

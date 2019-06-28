@@ -14,11 +14,24 @@
 @interface UserInfo () <UITableViewDelegate, UITableViewDataSource>
 
 @property(nonatomic, strong) UITableView *tableView;
-@property(nonatomic, strong) NSString *url1;
 @property(nonatomic, strong) NSMutableArray<NSString*> *datalist;
 @property(nonatomic, strong) NSMutableArray<NSString*> *items;
 @property (strong, nonatomic) UIImageView *headImage;
 @property (nonatomic, strong)SelectPhotoManager *photoManager;
+
+@property(nonatomic, strong) NSString *url1;
+@property(nonatomic, assign) int like_count;
+@property(nonatomic, assign) int comment_count;
+@property(nonatomic, assign) int whichnum;
+@property(nonatomic, strong) NSString *nickname;
+@property(nonatomic, strong) NSString *signment;
+
+@property(nonatomic, strong) UILabel *name;
+@property(nonatomic, strong) UILabel *sign;
+@property(nonatomic, strong) UIButton *btn1;
+@property(nonatomic, strong) UIButton *btn2;
+@property(nonatomic, strong) UIButton *btn3;
+@property(nonatomic, strong) UIButton *btn4;
 
 @end
 
@@ -28,56 +41,79 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    [self loginButtonOnClick];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(ChangeNameNotification:) name:@"ChangeNameNotification" object:nil];
+    
+    [self loaddata];
 }
 
-- (void)loginButtonOnClick {
-    NSURL *url = [NSURL URLWithString:@"http://hw.mikualpha.cn/login.php"];
-    
-    //创建request
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
-    request.HTTPMethod = @"POST";
-    NSString *params = @"username=maple&password=123456789";
-    request.HTTPBody = [params dataUsingEncoding:NSUTF8StringEncoding];
-    
-    //创建NSURLSession
-    NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
-    NSURLSession *delegateFreeSession = [NSURLSession sessionWithConfiguration:defaultConfigObject delegate:nil delegateQueue: [NSOperationQueue mainQueue]];
-    
-    //创建任务
-    NSURLSessionDataTask *task = [delegateFreeSession dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        NSString* jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        NSData* jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
-        NSDictionary* dic = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableLeaves error:nil];
-        NSNumber* status = [dic objectForKey:@"status"];
-        int myStatus = [status intValue];
-        if (myStatus == 200){
-            NSDictionary* dataDic = [dic objectForKey:@"data"];
-            AppDelegate *myDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-            myDelegate.token = [dataDic objectForKey:@"token"];
-            NSLog(@"%@", myDelegate.token);
-            NSLog(@"登陆成功");
-            
-            [self loaddata];
-            //跳转到新闻首页
-            
-        }else if (myStatus == 400){
-            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"消息提示" message:@"请求方式或传参错误" preferredStyle:UIAlertControllerStyleAlert];
-            [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-                NSLog(@"点击取消");
-            }]];
-            [self presentViewController:alertController animated:YES completion:nil];
-        }else if (myStatus == 403){
-            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"消息提示" message:@"用户名或密码错误" preferredStyle:UIAlertControllerStyleAlert];
-            [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-                NSLog(@"点击取消");
-            }]];
-            [self presentViewController:alertController animated:YES completion:nil];
-        }
+-(void)ChangeNameNotification:(NSNotification*)notification{
+    NSDictionary *nameDictionary = [notification userInfo];
+    int flag = 0;
+    AppDelegate *myDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    if (_whichnum == 0){
+        _name.text = [nameDictionary objectForKey:@"name"];
+        flag = 1;
+    }
+    else if (_whichnum == 1){
+        _sign.text = [nameDictionary objectForKey:@"name"];
+        flag = 1;
+    }
+    else if (_whichnum == 2){
+        _datalist[2] = [nameDictionary objectForKey:@"name"];
+        [_tableView reloadData];
+    }
+    else if (_whichnum == 3){
+        _datalist[3] = [nameDictionary objectForKey:@"name"];
+        [_tableView reloadData];
+    }
+    else if (_whichnum == 4){
+        _datalist[4] = [nameDictionary objectForKey:@"name"];
+        [_tableView reloadData];
+    }
+    if (flag == 1){
+        NSURLSessionConfiguration *defaultConfigObj = [NSURLSessionConfiguration defaultSessionConfiguration];
+        NSURLSession *delegateFreeSession = [NSURLSession sessionWithConfiguration:defaultConfigObj
+                                                                          delegate:self
+                                                                     delegateQueue:[NSOperationQueue mainQueue]];
+        NSURL * url = [NSURL URLWithString:@"http://hw.mikualpha.cn/user.php"];
+        NSMutableURLRequest * request = [[NSMutableURLRequest alloc]initWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10];
+        [request setValue:myDelegate.token forHTTPHeaderField:@"Authorization"];
+        [request setHTTPMethod:@"POST"];
+        NSString * str  = [NSString stringWithFormat:@"%@%@%@%@", @"nickname=", _name.text, @"&signment=", _sign.text];
+        NSData * data = [str dataUsingEncoding:NSUTF8StringEncoding];
+        [request setHTTPBody:data];
         
-    }];
-    
-    [task resume];
+        NSURLSessionDataTask *dataTask = [delegateFreeSession dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error){
+            NSString* jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            NSData* jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+            NSDictionary* dic = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableLeaves error:nil];
+            NSNumber* status = [dic objectForKey:@"status"];
+            NSLog(@"jsonString%@", jsonString);
+            NSLog(@"error%@", error);
+            int myStatus = [status intValue];
+            if (myStatus == 200){
+                NSLog(@"upload succeed");
+            }else if (myStatus == 400){
+                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"消息提示" message:@"参数错误" preferredStyle:UIAlertControllerStyleAlert];
+                [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+                    NSLog(@"点击取消");
+                }]];
+                [self presentViewController:alertController animated:YES completion:nil];
+            }else if (myStatus == 401){
+                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"消息提示" message:@"登录信息已过期" preferredStyle:UIAlertControllerStyleAlert];
+                [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+                    NSLog(@"点击取消");
+                }]];
+                [self presentViewController:alertController animated:YES completion:nil];
+            }
+        }];
+        
+        [dataTask resume];
+    }
+}
+
+-(void)dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 //生成控件
@@ -95,77 +131,77 @@
     [_headImage addGestureRecognizer:tap];
     [self.view addSubview:_headImage];
     
-    UILabel *name = [[UILabel alloc] initWithFrame:CGRectMake(130, 120, 200, 40)];
-    name.backgroundColor = [UIColor whiteColor];
-    name.text = _datalist[0];
-    name.textAlignment =  NSTextAlignmentLeft;
-    name.font = [UIFont systemFontOfSize:20.f];
-    name.font = [UIFont boldSystemFontOfSize:20.f];
-    name.textColor = [UIColor blackColor];
-    [self.view addSubview:name];
+    _name = [[UILabel alloc] initWithFrame:CGRectMake(130, 120, 200, 40)];
+    _name.backgroundColor = [UIColor whiteColor];
+    _name.text = _nickname;
+    _name.textAlignment =  NSTextAlignmentLeft;
+    _name.font = [UIFont systemFontOfSize:20.f];
+    _name.font = [UIFont boldSystemFontOfSize:20.f];
+    _name.textColor = [UIColor blackColor];
+    [self.view addSubview:_name];
     
-    UILabel *sign = [[UILabel alloc] initWithFrame:CGRectMake(130, 160, 250, 20)];
-    sign.backgroundColor = [UIColor whiteColor];
+    _sign = [[UILabel alloc] initWithFrame:CGRectMake(130, 160, 250, 20)];
+    _sign.backgroundColor = [UIColor whiteColor];
     //sign.text = @"这家伙很懒，什么都没有留下...";
-    sign.text = _datalist[1];
-    sign.textAlignment =  NSTextAlignmentLeft;
-    sign.font = [UIFont systemFontOfSize:8.f];
-    sign.font = [UIFont boldSystemFontOfSize:15.f];
-    sign.textColor = [UIColor blackColor];
-    [self.view addSubview:sign];
+    _sign.text = _signment;
+    _sign.textAlignment =  NSTextAlignmentLeft;
+    _sign.font = [UIFont systemFontOfSize:8.f];
+    _sign.font = [UIFont boldSystemFontOfSize:15.f];
+    _sign.textColor = [UIColor blackColor];
+    [self.view addSubview:_sign];
     
-    UIButton *btn1 = [[UIButton alloc] initWithFrame:CGRectMake(5, 200, 100, 70)];
+    _btn1 = [[UIButton alloc] initWithFrame:CGRectMake(5, 200, 100, 70)];
     //[btn1 setBackgroundColor: [UIColor grayColor]];
-    [btn1 setTitleColor:UIColor.blackColor forState:UIControlStateNormal];
-    int num1 = 4;
-    NSString *str1 = [NSString stringWithFormat:@"%d", num1];
+    [_btn1 setTitleColor:UIColor.blackColor forState:UIControlStateNormal];
+    //int num1 = 4;
+    NSString *str1 = [NSString stringWithFormat:@"%d", _comment_count];
     NSString *str2 = @"\n评论";
     NSString *str3 = [NSString stringWithFormat:@"%@%@", str1, str2];
-    [btn1 setTitle:str3 forState:UIControlStateNormal];
-    btn1.titleLabel.textAlignment = NSTextAlignmentCenter;
-    btn1.titleLabel.font = [UIFont systemFontOfSize:19.f];
-    btn1.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
-    [btn1 addTarget:self action:@selector(payClick) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:btn1];
+    [_btn1 setTitle:str3 forState:UIControlStateNormal];
+    _btn1.titleLabel.textAlignment = NSTextAlignmentCenter;
+    _btn1.titleLabel.font = [UIFont systemFontOfSize:19.f];
+    _btn1.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    [_btn1 addTarget:self action:@selector(payClick) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:_btn1];
     
-    UIButton *btn2 = [[UIButton alloc] initWithFrame:CGRectMake(105, 200, 100, 70)];
+    _btn2 = [[UIButton alloc] initWithFrame:CGRectMake(105, 200, 100, 70)];
     //[btn2 setBackgroundColor: [UIColor grayColor]];
-    [btn2 setTitleColor:UIColor.blackColor forState:UIControlStateNormal];
+    [_btn2 setTitleColor:UIColor.blackColor forState:UIControlStateNormal];
     int num2 = 3;
     str1 = [NSString stringWithFormat:@"%d", num2];
     str2 = @"\n关注";
     str3 = [NSString stringWithFormat:@"%@%@", str1, str2];
-    [btn2 setTitle:str3 forState:UIControlStateNormal];
-    btn2.titleLabel.textAlignment = NSTextAlignmentCenter;
-    btn2.titleLabel.font = [UIFont systemFontOfSize:19.f];
-    btn2.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
-    [self.view addSubview:btn2];
+    [_btn2 setTitle:str3 forState:UIControlStateNormal];
+    _btn2.titleLabel.textAlignment = NSTextAlignmentCenter;
+    _btn2.titleLabel.font = [UIFont systemFontOfSize:19.f];
+    _btn2.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    [self.view addSubview:_btn2];
     
-    UIButton *btn3 = [[UIButton alloc] initWithFrame:CGRectMake(205, 200, 100, 70)];
+    _btn3 = [[UIButton alloc] initWithFrame:CGRectMake(205, 200, 100, 70)];
     //[btn3 setBackgroundColor: [UIColor grayColor]];
-    [btn3 setTitleColor:UIColor.blackColor forState:UIControlStateNormal];
+    [_btn3 setTitleColor:UIColor.blackColor forState:UIControlStateNormal];
     int num3 = screenRect.size.width;
     str1 = [NSString stringWithFormat:@"%d", num3];
     str2 = @"\n粉丝";
     str3 = [NSString stringWithFormat:@"%@%@", str1, str2];
-    [btn3 setTitle:str3 forState:UIControlStateNormal];
-    btn3.titleLabel.textAlignment = NSTextAlignmentCenter;
-    btn3.titleLabel.font = [UIFont systemFontOfSize:19.f];
-    btn3.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
-    [self.view addSubview:btn3];
+    [_btn3 setTitle:str3 forState:UIControlStateNormal];
+    _btn3.titleLabel.textAlignment = NSTextAlignmentCenter;
+    _btn3.titleLabel.font = [UIFont systemFontOfSize:19.f];
+    _btn3.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    [self.view addSubview:_btn3];
     
-    UIButton *btn4 = [[UIButton alloc] initWithFrame:CGRectMake(305, 200, 100, 70)];
+    _btn4 = [[UIButton alloc] initWithFrame:CGRectMake(305, 200, 100, 70)];
     //[btn4 setBackgroundColor: [UIColor grayColor]];
-    [btn4 setTitleColor:UIColor.blackColor forState:UIControlStateNormal];
-    int num4 = screenRect.size.height;
-    str1 = [NSString stringWithFormat:@"%d", num4];
+    [_btn4 setTitleColor:UIColor.blackColor forState:UIControlStateNormal];
+    //int num4 = screenRect.size.height;
+    str1 = [NSString stringWithFormat:@"%d", _like_count];
     str2 = @"\n点赞";
     str3 = [NSString stringWithFormat:@"%@%@", str1, str2];
-    [btn4 setTitle:str3 forState:UIControlStateNormal];
-    btn4.titleLabel.textAlignment = NSTextAlignmentCenter;
-    btn4.titleLabel.font = [UIFont systemFontOfSize:19.f];
-    btn4.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
-    [self.view addSubview:btn4];
+    [_btn4 setTitle:str3 forState:UIControlStateNormal];
+    _btn4.titleLabel.textAlignment = NSTextAlignmentCenter;
+    _btn4.titleLabel.font = [UIFont systemFontOfSize:19.f];
+    _btn4.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    [self.view addSubview:_btn4];
     
     _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 300, screenRect.size.width, 300) style:UITableViewStylePlain];
     _tableView.delegate = self;
@@ -180,79 +216,77 @@
 
 - (void)loaddata{
     self.items = [[NSMutableArray alloc]initWithObjects:@"昵称",@"个性签名",@"性别",@"生日",@"地区",nil];
-    self.datalist = [[NSMutableArray alloc]initWithObjects:@"2",@"2",@"男",@"2019-9-1",@"中国",nil];
+    self.datalist = [[NSMutableArray alloc]initWithObjects:@"",@"",@"男",@"2019-9-1",@"中国",nil];
     
     NSURLSessionConfiguration *defaultConfigObj = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSURLSession *delegateFreeSession = [NSURLSession sessionWithConfiguration:defaultConfigObj
                                                                       delegate:self
                                                                  delegateQueue:[NSOperationQueue mainQueue]];
     
-    NSURL *url = [NSURL URLWithString:@"http://hw.mikualpha.cn/user.php"];
     AppDelegate *myDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    NSURL *url = [NSURL URLWithString:@"http://hw.mikualpha.cn/user.php"];
     NSMutableURLRequest * request = [[NSMutableURLRequest alloc]initWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10];
     [request setValue:myDelegate.token forHTTPHeaderField:@"Authorization"];
     [request setHTTPMethod:@"GET"];
-    NSURLSessionDataTask *dataTask = [delegateFreeSession dataTaskWithRequest:request
-        completionHandler:^(NSData *data, NSURLResponse *response, NSError *error){
-            NSString* jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-            NSData* jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
-            NSDictionary* dic = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableLeaves error:nil];
-            NSNumber* status = [dic objectForKey:@"status"];
-            NSLog(@"%@", jsonString);
-            int myStatus = [status intValue];
-            if (myStatus == 200){
-                NSDictionary* dataDic = [dic objectForKey:@"data"];
-                self.datalist[0] = [dataDic objectForKey:@"nickname"];
-                self.datalist[1] = [dataDic objectForKey:@"signment"];
-                self.url1 = [dataDic objectForKey:@"avatar"];
-                //跳转到新闻首页
-                NSLog(@"成功获取信息");
-                [self setup];
-            }else if (myStatus == 400){
-                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"消息提示" message:@"参数错误" preferredStyle:UIAlertControllerStyleAlert];
-                [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-                    NSLog(@"点击取消");
-                }]];
-                [self presentViewController:alertController animated:YES completion:nil];
-            }else if (myStatus == 401){
-                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"消息提示" message:@"登录信息已过期" preferredStyle:UIAlertControllerStyleAlert];
-                [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-                    NSLog(@"点击取消");
-                }]];
-                [self presentViewController:alertController animated:YES completion:nil];
-            }
-        }];
+    NSURLSessionDataTask *dataTask = [delegateFreeSession dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error){
+        NSString* jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        NSData* jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+        NSDictionary* dic = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableLeaves error:nil];
+        NSNumber* status = [dic objectForKey:@"status"];
+        int myStatus = [status intValue];
+        if (myStatus == 200){
+            NSDictionary* dataDic = [dic objectForKey:@"data"];
+            self.nickname = [dataDic objectForKey:@"nickname"];
+            self.signment = [dataDic objectForKey:@"signment"];
+            self.url1 = [dataDic objectForKey:@"avatar"];
+            //跳转到新闻首页
+            NSLog(@"成功获取信息");
+            [self setup];
+        }else if (myStatus == 400){
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"消息提示" message:@"参数错误" preferredStyle:UIAlertControllerStyleAlert];
+            [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+                NSLog(@"点击取消");
+            }]];
+            [self presentViewController:alertController animated:YES completion:nil];
+        }else if (myStatus == 401){
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"消息提示" message:@"登录信息已过期" preferredStyle:UIAlertControllerStyleAlert];
+            [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+                NSLog(@"点击取消");
+            }]];
+            [self presentViewController:alertController animated:YES completion:nil];
+        }
+    }];
     
     [dataTask resume];
 }
 
 - (void)payClick{
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"提示" message:@"请输入个人信息" preferredStyle:UIAlertControllerStyleAlert];
-    //增加确定按钮；
-    [alertController addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        //获取第1个输入框；
-        UITextField *userNameTextField = alertController.textFields.firstObject;
-        
-        //获取第2个输入框；
-        UITextField *passwordTextField = alertController.textFields.lastObject;
-        
-        NSLog(@"用户名 = %@，密码 = %@",userNameTextField.text,passwordTextField.text);
-        
-    }]];
-    
-    //增加取消按钮；
-    [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault handler:nil]];
-    
-    //定义第一个输入框；
-    [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
-        textField.placeholder = @"请输入用户名";
-    }];
-    //定义第二个输入框；
-    [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
-        textField.placeholder = @"请输入密码";
-    }];
-    
-    [self presentViewController:alertController animated:true completion:nil];
+    /*UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"提示" message:@"请输入个人信息" preferredStyle:UIAlertControllerStyleAlert];
+     //增加确定按钮；
+     [alertController addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+     //获取第1个输入框；
+     UITextField *userNameTextField = alertController.textFields.firstObject;
+     
+     //获取第2个输入框；
+     UITextField *passwordTextField = alertController.textFields.lastObject;
+     
+     NSLog(@"用户名 = %@，密码 = %@",userNameTextField.text,passwordTextField.text);
+     
+     }]];
+     
+     //增加取消按钮；
+     [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault handler:nil]];
+     
+     //定义第一个输入框；
+     [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+     textField.placeholder = @"请输入用户名";
+     }];
+     //定义第二个输入框；
+     [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+     textField.placeholder = @"请输入密码";
+     }];
+     
+     [self presentViewController:alertController animated:true completion:nil];*/
 }
 
 //头像点击事件
@@ -266,14 +300,56 @@
     //选取照片成功
     _photoManager.successHandle=^(SelectPhotoManager *manager,UIImage *image){
         
+        NSData *imagedata = UIImagePNGRepresentation(image);
+        image = [UIImage imageWithData:imagedata];
         mySelf.headImage.image = image;
+        [self upLoadImage:image];
         //保存到本地
         NSData *data = UIImagePNGRepresentation(image);
         [[NSUserDefaults standardUserDefaults] setObject:data forKey:@"headerImage"];
     };
 }
 
-
+-(void)upLoadImage:(UIImage *)image{
+    NSURLSessionConfiguration * defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
+    NSURLSession * delegateFreeSession = [NSURLSession sessionWithConfiguration:defaultConfigObject delegate:nil delegateQueue:[NSOperationQueue mainQueue]];
+    
+    AppDelegate *myDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    NSURL * url = [NSURL URLWithString:@"http://happyzhier.club:3000/image"];
+    NSMutableURLRequest * request = [[NSMutableURLRequest alloc]initWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10];
+    //[request setValue:myDelegate.token forHTTPHeaderField:@"Authorization"];
+    //[request setValue:@"image/jpeg" forHTTPHeaderField:@"Content-Type"];
+    [request setHTTPMethod:@"POST"];
+    NSData *data = UIImagePNGRepresentation(image);
+    [request setHTTPBody:data];
+    
+    NSURLSessionDataTask *dataTask = [delegateFreeSession dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error){
+        NSString* jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        NSData* jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+        NSDictionary* dic = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableLeaves error:nil];
+        NSNumber* status = [dic objectForKey:@"status"];
+        NSLog(@"jsonString%@", jsonString);
+        NSLog(@"error%@", error);
+        int myStatus = [status intValue];
+        if (myStatus == 200){
+            NSLog(@"upload succeed");
+        }else if (myStatus == 400){
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"消息提示" message:@"参数错误" preferredStyle:UIAlertControllerStyleAlert];
+            [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+                NSLog(@"点击取消");
+            }]];
+            [self presentViewController:alertController animated:YES completion:nil];
+        }else if (myStatus == 401){
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"消息提示" message:@"登录信息已过期" preferredStyle:UIAlertControllerStyleAlert];
+            [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+                NSLog(@"点击取消");
+            }]];
+            [self presentViewController:alertController animated:YES completion:nil];
+        }
+    }];
+    
+    [dataTask resume];
+}
 
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -327,6 +403,7 @@
      NSString *str2 = _items[indexPath.section * 2 + indexPath.row];
      NSString *str3 = [NSString stringWithFormat:@"%@%@", str1, str2];*/
     NSString *info = _items[indexPath.section * 2 + indexPath.row];
+    _whichnum = indexPath.section * 2 + indexPath.row;
     ModifyInfo *controller = [[ModifyInfo alloc] initWithInfo:info];
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:controller];
     dispatch_async(dispatch_get_main_queue(), ^{

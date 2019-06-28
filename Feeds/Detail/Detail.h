@@ -15,6 +15,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 //@property (nonatomic, strong) UITextView *textView;
 @property (nonatomic, strong) WKWebView *  webView;
+@property (nonatomic, strong) NSArray* array;
+@property (nonatomic, strong) UIView* bgView;
+@property (nonatomic, strong) UIImageView* imgView;
 
 @end
 

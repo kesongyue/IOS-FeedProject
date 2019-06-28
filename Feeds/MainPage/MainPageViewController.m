@@ -3,6 +3,7 @@
 #import "SingleImgCell.h"
 #import "News.h"
 #import "AppDelegate.h"
+#import "DetailPage.h"
 
 @interface MainPageViewController () <UITableViewDelegate, UITableViewDataSource>
 
@@ -169,7 +170,13 @@
  *  点击单元格触发该方法
  */
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+    if (tableView == self.tableView) {
+        DetailPage* detailPage = [[DetailPage alloc]initWithGroupId:[[self.arrayDS objectAtIndex:indexPath.row] group_id]];
+        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:detailPage];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self presentViewController:navController animated:YES completion:nil];
+        });
+    }
 }
 
 @end

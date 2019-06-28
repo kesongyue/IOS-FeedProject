@@ -21,13 +21,15 @@
     [super viewDidLoad];
     CGRect screenRect = [UIScreen mainScreen].bounds;
     self.selectView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenRect.size.width, 50) style:UITableViewStylePlain];
+    [self.selectView setBackgroundColor: [UIColor grayColor]];
     self.selectView.delegate = self;
     self.selectView.dataSource = self;
     [self.view addSubview:self.selectView];
+    /*
     self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 50, screenRect.size.width, screenRect.size.height - 50) style:UITableViewStylePlain];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    [self.view addSubview:self.tableView];
+    [self.view addSubview:self.tableView];*/
     self.arrayDS = [NSMutableArray array];
     self.offset = 0;
     [self setupRefresh];
@@ -101,7 +103,6 @@
             cell = [[SingleImgCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"SIC"];
         }
         cell.title.text = @"QwQ";
-        NSLog(@"000");
         return cell;
     } else {
         NSLog(@"111");

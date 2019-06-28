@@ -11,6 +11,7 @@
 		56F9CAE422C604E3007D00BA /* News.m in Sources */ = {isa = PBXBuildFile; fileRef = 56F9CADD22C604E3007D00BA /* News.m */; };
 		56F9CAE522C604E3007D00BA /* MainPageTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 56F9CADF22C604E3007D00BA /* MainPageTableViewCell.m */; };
 		56F9CAE922C6394C007D00BA /* MainPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 56F9CAE822C6394C007D00BA /* MainPageViewController.m */; };
+		56F9CAEB22C641D2007D00BA /* SingleImgCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 56F9CAEA22C641D2007D00BA /* SingleImgCell.m */; };
 		CF72F3DD22BE2E680067C147 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CF72F3DC22BE2E680067C147 /* AppDelegate.m */; };
 		CF72F3E022BE2E680067C147 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF72F3DF22BE2E680067C147 /* ViewController.m */; };
 		CF72F3E322BE2E680067C147 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CF72F3E122BE2E680067C147 /* Main.storyboard */; };
@@ -56,8 +57,8 @@
 		56F9CADE22C604E3007D00BA /* SingleImgCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingleImgCell.h; sourceTree = "<group>"; };
 		56F9CADF22C604E3007D00BA /* MainPageTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainPageTableViewCell.m; sourceTree = "<group>"; };
 		56F9CAE022C604E3007D00BA /* HeaderCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeaderCell.h; sourceTree = "<group>"; };
-		56F9CAE222C604E3007D00BA /* SingleImgCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SingleImgCell.m; sourceTree = "<group>"; };
 		56F9CAE822C6394C007D00BA /* MainPageViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainPageViewController.m; sourceTree = "<group>"; };
+		56F9CAEA22C641D2007D00BA /* SingleImgCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SingleImgCell.m; sourceTree = "<group>"; };
 		CF72F3D822BE2E680067C147 /* Feeds.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Feeds.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF72F3DB22BE2E680067C147 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		CF72F3DC22BE2E680067C147 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -194,10 +195,10 @@
 				56F9CADC22C604E3007D00BA /* News.h */,
 				56F9CADD22C604E3007D00BA /* News.m */,
 				56F9CADE22C604E3007D00BA /* SingleImgCell.h */,
-				56F9CAE222C604E3007D00BA /* SingleImgCell.m */,
 				56F9CADB22C604E3007D00BA /* MainPageViewController.h */,
 				CF72F41222BE30DB0067C147 /* MainPage.storyboard */,
 				56F9CAE822C6394C007D00BA /* MainPageViewController.m */,
+				56F9CAEA22C641D2007D00BA /* SingleImgCell.m */,
 			);
 			path = MainPage;
 			sourceTree = "<group>";
@@ -376,6 +377,7 @@
 				CF72F3EB22BE2E690067C147 /* main.m in Sources */,
 				CF72F41022BE2F540067C147 /* DetailPage.m in Sources */,
 				56F9CAE922C6394C007D00BA /* MainPageViewController.m in Sources */,
+				56F9CAEB22C641D2007D00BA /* SingleImgCell.m in Sources */,
 				DFFEC6B622C5C75C00ACBDD8 /* UserInfo.m in Sources */,
 				56F9CAE522C604E3007D00BA /* MainPageTableViewCell.m in Sources */,
 				CF72F3DD22BE2E680067C147 /* AppDelegate.m in Sources */,

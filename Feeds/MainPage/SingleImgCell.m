@@ -7,8 +7,7 @@
     if (self) {
         self.layoutMargins = UIEdgeInsetsZero;
         
-        CGRect screenRect = [UIScreen mainScreen].bounds;
-        self.title = [[UILabel alloc]  initWithFrame:CGRectMake(20, 10, screenRect.size.width - 130, 50)];
+        self.title = [[UILabel alloc]  initWithFrame:CGRectMake(20, 10, self.frame.size.width - 120, 50)];
         self.title.numberOfLines = 2;
         self.title.textAlignment = NSTextAlignmentLeft;
         self.title.font = [UIFont boldSystemFontOfSize:16];

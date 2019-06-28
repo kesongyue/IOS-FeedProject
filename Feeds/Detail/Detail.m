@@ -59,6 +59,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.array = [NSArray array];
     //使图片居中
     NSString* jScript = @"var meta = document.createElement('meta'); meta.setAttribute('name', 'viewport'); meta.setAttribute('content', 'width=device-width'); document.getElementsByTagName('head')[0].appendChild(meta); var imgs = document.getElementsByTagName('img');for (var i in imgs){imgs[i].style.maxWidth='100%';imgs[i].style.height='auto';}";
     WKUserScript* wkUScript = [[WKUserScript alloc]initWithSource:jScript injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES];
@@ -117,6 +118,50 @@
     [self.webView loadHTMLString:html baseURL:nil];
 }
 
+-(void)showBigImage:(NSString *)imageUrl{
+    //创建灰色透明背景，使其背后内容不可操作
+    self.bgView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
+    [self.bgView setBackgroundColor:[UIColor colorWithRed:0.3
+                                                    green:0.3
+                                                     blue:0.3
+                                                    alpha:0.7]];
+    [self.view addSubview:self.bgView];
+    
+    //创建边框视图
+    UIView *borderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH-20, 240)];
+    //将图层的边框设置为圆脚
+    borderView.layer.cornerRadius = 8;
+    borderView.layer.masksToBounds = YES;
+    //给图层添加一个有色边框
+    borderView.layer.borderWidth = 8;
+    borderView.layer.borderColor = [[UIColor colorWithRed:0.9
+                                                    green:0.9
+                                                     blue:0.9
+                                                    alpha:0.7] CGColor];
+    [borderView setCenter:self.bgView.center];
+    [self.bgView addSubview:borderView];
+    
+    //创建关闭按钮
+    UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    //    [closeBtn setImage:[UIImage imageNamed:@"close.png"] forState:UIControlStateNormal];
+    closeBtn.backgroundColor = [UIColor redColor];
+    [closeBtn addTarget:self action:@selector(removeBigImage) forControlEvents:UIControlEventTouchUpInside];
+    [closeBtn setFrame:CGRectMake(borderView.frame.origin.x+borderView.frame.size.width-20, borderView.frame.origin.y-6, 26, 27)];
+    [self.bgView addSubview:closeBtn];
+    
+    //创建显示图像视图
+    self.imgView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10, CGRectGetWidth(borderView.frame)-20, CGRectGetHeight(borderView.frame)-20)];
+    self.imgView.userInteractionEnabled = YES;
+    [self.imgView setImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:imageUrl]]]];
+    [borderView addSubview:self.imgView];
+    
+}
+//关闭按钮
+-(void)removeBigImage
+{
+    self.bgView.hidden = YES;
+}
+
 #pragma mark - WKNavigationDelegate
 // 页面开始加载时调用
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation{
@@ -128,7 +173,43 @@
 }
 // 页面加载完成之后调用
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation{
+    NSLog(@"didFinishNavigation");
     
+    static  NSString * const jsGetImages =
+    @"function getImages(){\
+    var objs = document.getElementsByTagName(\"img\");\
+    for(var i=0;i<objs.length;i++){\
+    objs[i].onclick=function(){\
+    document.location=\"myweb:imageClick:\"+this.src;\
+    };\
+    };\
+    return objs.length;\
+    };getImages();";
+    
+    //调用自定义js
+    //用js获取全部图片
+    [self.webView evaluateJavaScript:jsGetImages completionHandler:^(id Result, NSError * error) {
+        NSLog(@"js___Result==%@",Result);
+        NSLog(@"js___Error -> %@", error);
+    }];
+    
+    /*NSString* js2 = @"getImages()";
+     //__block NSArray* array = [NSArray array];
+     [self.webView evaluateJavaScript:js2 completionHandler:^(id Result,NSError* error){
+     NSLog(@"js2__Result==%@",Result);
+     NSLog(@"js2__Error -> %@", error);
+     
+     NSString *resurlt=[NSString stringWithFormat:@"%@",Result];
+     
+     if([resurlt hasPrefix:@"#"])
+     {
+     resurlt=[resurlt substringFromIndex:1];
+     }
+     NSLog(@"result===%@",resurlt);
+     self.array=[resurlt componentsSeparatedByString:@"#"];
+     NSLog(@"array====%@",self.array);
+     
+     }];*/
 }
 // 页面加载失败时调用
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation{
@@ -150,11 +231,22 @@
 // 在发送请求之前，决定是否跳转
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler{
     
-    NSLog(@"%@",navigationAction.request.URL.absoluteString);
-    //允许跳转
+    //捕获跳转链接
+    NSString* requestString = [[navigationAction.request URL] absoluteString];
+    NSLog(@"%@",requestString);
+    if([requestString hasPrefix:@"myweb:imageClick:"]){
+        NSString *imageUrl = [requestString substringFromIndex:@"myweb:imageClick:".length];
+        NSLog(@"image url------%@", imageUrl);
+        if(self.bgView){
+            //设置不隐藏，还原放大缩小，显示图片
+            self.bgView.hidden = NO;
+            self.imgView.frame = CGRectMake(10, 10, SCREEN_WIDTH-40, 220);
+            [self.imgView setImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:imageUrl]]]];
+        }else{
+            [self showBigImage:imageUrl];
+        }
+    }
     decisionHandler(WKNavigationActionPolicyAllow);
-    //不允许跳转
-    //decisionHandler(WKNavigationActionPolicyCancel);
 }
 #pragma mark - WKUIDelegate
 // 创建一个新的WebView

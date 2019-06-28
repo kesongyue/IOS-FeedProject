@@ -25,11 +25,11 @@
     self.selectView.delegate = self;
     self.selectView.dataSource = self;
     [self.view addSubview:self.selectView];
-    /*
+    
     self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 50, screenRect.size.width, screenRect.size.height - 50) style:UITableViewStylePlain];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    [self.view addSubview:self.tableView];*/
+    //[self.view addSubview:self.tableView];
     self.arrayDS = [NSMutableArray array];
     self.offset = 0;
     [self setupRefresh];

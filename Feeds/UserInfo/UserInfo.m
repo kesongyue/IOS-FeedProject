@@ -14,6 +14,7 @@
 @interface UserInfo () <UITableViewDelegate, UITableViewDataSource>
 
 @property(nonatomic, strong) UITableView *tableView;
+@property(nonatomic, strong) NSString *url1;
 @property(nonatomic, strong) NSMutableArray<NSString*> *datalist;
 @property(nonatomic, strong) NSMutableArray<NSString*> *items;
 @property (strong, nonatomic) UIImageView *headImage;
@@ -27,8 +28,6 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    [self loaddata];
-    [self setup];
     [self loginButtonOnClick];
 }
 
@@ -58,6 +57,8 @@
             myDelegate.token = [dataDic objectForKey:@"token"];
             NSLog(@"%@", myDelegate.token);
             NSLog(@"登陆成功");
+            
+            [self loaddata];
             //跳转到新闻首页
             
         }else if (myStatus == 400){
@@ -86,7 +87,9 @@
     CGRect screenRect = [UIScreen mainScreen].bounds;
     
     self.headImage = [[UIImageView alloc] initWithFrame:CGRectMake(20, 100, 100, 100)];
-    [_headImage setImage:[UIImage imageNamed:@"icon_directory.jpg"]];
+    NSURL *imageUrl = [NSURL URLWithString: self.url1];
+    UIImage *myImages = [UIImage imageWithData:[NSData dataWithContentsOfURL:imageUrl]];
+    _headImage.image = myImages;
     _headImage.userInteractionEnabled=YES;
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapClick:)];
     [_headImage addGestureRecognizer:tap];
@@ -94,7 +97,7 @@
     
     UILabel *name = [[UILabel alloc] initWithFrame:CGRectMake(130, 120, 200, 40)];
     name.backgroundColor = [UIColor whiteColor];
-    name.text = @"超级用户";
+    name.text = _datalist[0];
     name.textAlignment =  NSTextAlignmentLeft;
     name.font = [UIFont systemFontOfSize:20.f];
     name.font = [UIFont boldSystemFontOfSize:20.f];
@@ -103,7 +106,8 @@
     
     UILabel *sign = [[UILabel alloc] initWithFrame:CGRectMake(130, 160, 250, 20)];
     sign.backgroundColor = [UIColor whiteColor];
-    sign.text = @"这家伙很懒，什么都没有留下...";
+    //sign.text = @"这家伙很懒，什么都没有留下...";
+    sign.text = _datalist[1];
     sign.textAlignment =  NSTextAlignmentLeft;
     sign.font = [UIFont systemFontOfSize:8.f];
     sign.font = [UIFont boldSystemFontOfSize:15.f];
@@ -176,14 +180,50 @@
 
 - (void)loaddata{
     self.items = [[NSMutableArray alloc]initWithObjects:@"昵称",@"个性签名",@"性别",@"生日",@"地区",nil];
-    self.datalist = [[NSMutableArray alloc]initWithObjects:@"",@"",@"男",@"2019-9-1",@"中国",nil];
+    self.datalist = [[NSMutableArray alloc]initWithObjects:@"2",@"2",@"男",@"2019-9-1",@"中国",nil];
     
-    /*NSURLSessionConfiguration *defaultConfigObj = [NSURLSessionConfiguration defaultSessionConfiguration];
-     NSURLSession *delegateFreeSession = [NSURLSession sessionWithConfiguration:defaultConfigObj
-     delegate:self
-     delegateQueue:[NSOperationQueue mainQueue]];
-     
-     NSURL *url = [NSURL URLWithString:@"http://hw.mikualpha.cn/user.php"];*/
+    NSURLSessionConfiguration *defaultConfigObj = [NSURLSessionConfiguration defaultSessionConfiguration];
+    NSURLSession *delegateFreeSession = [NSURLSession sessionWithConfiguration:defaultConfigObj
+                                                                      delegate:self
+                                                                 delegateQueue:[NSOperationQueue mainQueue]];
+    
+    NSURL *url = [NSURL URLWithString:@"http://hw.mikualpha.cn/user.php"];
+    AppDelegate *myDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    NSMutableURLRequest * request = [[NSMutableURLRequest alloc]initWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10];
+    [request setValue:myDelegate.token forHTTPHeaderField:@"Authorization"];
+    [request setHTTPMethod:@"GET"];
+    NSURLSessionDataTask *dataTask = [delegateFreeSession dataTaskWithRequest:request
+        completionHandler:^(NSData *data, NSURLResponse *response, NSError *error){
+            NSString* jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            NSData* jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+            NSDictionary* dic = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableLeaves error:nil];
+            NSNumber* status = [dic objectForKey:@"status"];
+            NSLog(@"%@", jsonString);
+            int myStatus = [status intValue];
+            if (myStatus == 200){
+                NSDictionary* dataDic = [dic objectForKey:@"data"];
+                self.datalist[0] = [dataDic objectForKey:@"nickname"];
+                self.datalist[1] = [dataDic objectForKey:@"signment"];
+                self.url1 = [dataDic objectForKey:@"avatar"];
+                //跳转到新闻首页
+                NSLog(@"成功获取信息");
+                [self setup];
+            }else if (myStatus == 400){
+                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"消息提示" message:@"参数错误" preferredStyle:UIAlertControllerStyleAlert];
+                [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+                    NSLog(@"点击取消");
+                }]];
+                [self presentViewController:alertController animated:YES completion:nil];
+            }else if (myStatus == 401){
+                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"消息提示" message:@"登录信息已过期" preferredStyle:UIAlertControllerStyleAlert];
+                [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+                    NSLog(@"点击取消");
+                }]];
+                [self presentViewController:alertController animated:YES completion:nil];
+            }
+        }];
+    
+    [dataTask resume];
 }
 
 - (void)payClick{

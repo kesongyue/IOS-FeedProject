@@ -11,7 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Detail: UIViewController
+@interface DetailPage: UIViewController
 
 //@property (nonatomic, strong) UITextView *textView;
 @property (nonatomic, strong) WKWebView *  webView;

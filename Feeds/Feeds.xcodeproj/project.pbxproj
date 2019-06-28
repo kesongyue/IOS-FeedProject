@@ -15,7 +15,7 @@
 		CF72F3EB22BE2E690067C147 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CF72F3EA22BE2E690067C147 /* main.m */; };
 		CF72F3F522BE2E690067C147 /* FeedsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CF72F3F422BE2E690067C147 /* FeedsTests.m */; };
 		CF72F40022BE2E690067C147 /* FeedsUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = CF72F3FF22BE2E690067C147 /* FeedsUITests.m */; };
-		CF72F41022BE2F540067C147 /* Detail.m in Sources */ = {isa = PBXBuildFile; fileRef = CF72F40F22BE2F540067C147 /* Detail.m */; };
+		CF72F41022BE2F540067C147 /* DetailPage.m in Sources */ = {isa = PBXBuildFile; fileRef = CF72F40F22BE2F540067C147 /* DetailPage.m */; };
 		CF72F41322BE30DB0067C147 /* MainPage.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CF72F41222BE30DB0067C147 /* MainPage.storyboard */; };
 		CFAB5F0422C5C59900DE38A1 /* RegisterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CFAB5F0322C5C59900DE38A1 /* RegisterViewController.m */; };
 		CFAB5F0922C5C5B800DE38A1 /* user.jpg in Resources */ = {isa = PBXBuildFile; fileRef = CFAB5F0622C5C5B800DE38A1 /* user.jpg */; };
@@ -60,8 +60,8 @@
 		CF72F3FB22BE2E690067C147 /* FeedsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FeedsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF72F3FF22BE2E690067C147 /* FeedsUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedsUITests.m; sourceTree = "<group>"; };
 		CF72F40122BE2E690067C147 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		CF72F40E22BE2F540067C147 /* Detail.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Detail.h; sourceTree = "<group>"; };
-		CF72F40F22BE2F540067C147 /* Detail.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Detail.m; sourceTree = "<group>"; };
+		CF72F40E22BE2F540067C147 /* DetailPage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailPage.h; sourceTree = "<group>"; };
+		CF72F40F22BE2F540067C147 /* DetailPage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailPage.m; sourceTree = "<group>"; };
 		CF72F41222BE30DB0067C147 /* MainPage.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = MainPage.storyboard; sourceTree = "<group>"; };
 		CFAB5F0222C5C59900DE38A1 /* RegisterViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RegisterViewController.h; sourceTree = "<group>"; };
 		CFAB5F0322C5C59900DE38A1 /* RegisterViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RegisterViewController.m; sourceTree = "<group>"; };
@@ -164,8 +164,8 @@
 		CF72F40D22BE2ED60067C147 /* Detail */ = {
 			isa = PBXGroup;
 			children = (
-				CF72F40E22BE2F540067C147 /* Detail.h */,
-				CF72F40F22BE2F540067C147 /* Detail.m */,
+				CF72F40E22BE2F540067C147 /* DetailPage.h */,
+				CF72F40F22BE2F540067C147 /* DetailPage.m */,
 			);
 			path = Detail;
 			sourceTree = "<group>";
@@ -348,7 +348,7 @@
 				CF72F3E022BE2E680067C147 /* ViewController.m in Sources */,
 				DFFEC6BD22C5C7EA00ACBDD8 /* ModifyInfo.m in Sources */,
 				CF72F3EB22BE2E690067C147 /* main.m in Sources */,
-				CF72F41022BE2F540067C147 /* Detail.m in Sources */,
+				CF72F41022BE2F540067C147 /* DetailPage.m in Sources */,
 				DFFEC6B622C5C75C00ACBDD8 /* UserInfo.m in Sources */,
 				CF72F3DD22BE2E680067C147 /* AppDelegate.m in Sources */,
 			);

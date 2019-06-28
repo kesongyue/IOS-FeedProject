@@ -6,7 +6,7 @@
 //  Copyright © 2019 ksy. All rights reserved.
 //
 
-#import "Detail.h"
+#import "DetailPage.h"
 #ifndef PrefixHeader_pch
 #define PrefixHeader_pch
 
@@ -55,7 +55,7 @@
 @end
 
 
-@implementation Detail
+@implementation DetailPage
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -83,13 +83,19 @@
     NSData* received = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
     NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:received options:kNilOptions error:nil];
     NSMutableString* html = [dict[@"data"][@"article_content"] mutableCopy];
+    NSMutableString* img_url = [dict[@"data"][@"image_url_prefix"] mutableCopy];
     
     //NSData* htmlData = [html dataUsingEncoding:NSUTF8StringEncoding];
-    
     //NSString* result = [[NSString alloc]initWithData:received encoding: NSUTF8StringEncoding];
     //修改原来的html里面的<img使得图片正常显示
+    
+    html = [self processImageOfHtml:html andImgUrl:img_url];
+    [self.webView loadHTMLString:html baseURL:nil];
+}
+
+-(NSMutableString*)processImageOfHtml:(NSMutableString*) html andImgUrl:(NSMutableString*) imgUrl{
     while (true) {
-        NSMutableString* img_url = [dict[@"data"][@"image_url_prefix"] mutableCopy];
+        NSMutableString* img_url = [[NSMutableString alloc] initWithString:imgUrl];
         NSString *regex = @"<img src=\"\\{\\{[^>]+>";
         NSRange range = [html rangeOfString:regex options:NSRegularExpressionSearch];
         if(range.location == NSNotFound){
@@ -98,7 +104,6 @@
         NSString* newStr = [html substringWithRange:range];
         regex = @"\\{\"[^\\}]+\\}";
         
-        //NSLog(@"%@",NSStringFromRange(range));
         newStr = [newStr substringWithRange:[newStr rangeOfString:regex options:NSRegularExpressionSearch]];
         NSDictionary* imgDict = [NSJSONSerialization JSONObjectWithData:[newStr dataUsingEncoding:NSUTF8StringEncoding] options:kNilOptions error:nil];
         [img_url appendString: imgDict[@"web_uri"]];
@@ -106,16 +111,7 @@
         [img_url appendString:@"\">"];
         [html replaceCharactersInRange:range withString:img_url];
     }
-    
-    /*TFHpple* xpathParser = [[TFHpple alloc]initWithHTMLData:htmlData encoding:html];
-     NSArray* imgArray = [xpathParser searchWithXPathQuery:@"//img"];
-     for(TFHppleElement* element in imgArray){
-     NSLog(@"%@",element.text);
-     }*/
-    
-    
-    
-    [self.webView loadHTMLString:html baseURL:nil];
+    return html;
 }
 
 -(void)showBigImage:(NSString *)imageUrl{
@@ -193,23 +189,6 @@
         NSLog(@"js___Error -> %@", error);
     }];
     
-    /*NSString* js2 = @"getImages()";
-     //__block NSArray* array = [NSArray array];
-     [self.webView evaluateJavaScript:js2 completionHandler:^(id Result,NSError* error){
-     NSLog(@"js2__Result==%@",Result);
-     NSLog(@"js2__Error -> %@", error);
-     
-     NSString *resurlt=[NSString stringWithFormat:@"%@",Result];
-     
-     if([resurlt hasPrefix:@"#"])
-     {
-     resurlt=[resurlt substringFromIndex:1];
-     }
-     NSLog(@"result===%@",resurlt);
-     self.array=[resurlt componentsSeparatedByString:@"#"];
-     NSLog(@"array====%@",self.array);
-     
-     }];*/
 }
 // 页面加载失败时调用
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation{

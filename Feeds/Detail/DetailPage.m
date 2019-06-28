@@ -6,7 +6,8 @@
 //  Copyright © 2019 ksy. All rights reserved.
 //
 
-#import "Detail.h"
+#import "DetailPage.h"
+#import "AppDelegate.h"
 #ifndef PrefixHeader_pch
 #define PrefixHeader_pch
 
@@ -55,11 +56,17 @@
 @end
 
 
-@implementation Detail
+@implementation DetailPage
+-(instancetype)initWithGroupId:(NSString*)group_id{
+    if(self = [super init]){
+        self.groupId = group_id;
+    }
+    return self;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.array = [NSArray array];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"< Back" style:UIBarButtonItemStylePlain target:self action:@selector(onClickBack:)];
     //使图片居中
     NSString* jScript = @"var meta = document.createElement('meta'); meta.setAttribute('name', 'viewport'); meta.setAttribute('content', 'width=device-width'); document.getElementsByTagName('head')[0].appendChild(meta); var imgs = document.getElementsByTagName('img');for (var i in imgs){imgs[i].style.maxWidth='100%';imgs[i].style.height='auto';}";
     WKUserScript* wkUScript = [[WKUserScript alloc]initWithSource:jScript injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES];
@@ -75,21 +82,39 @@
     
     NSURL* url = [NSURL URLWithString:@"https://i.snssdk.com/course/article_content"];
     NSMutableURLRequest* request = [[NSMutableURLRequest alloc]initWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10];
+    AppDelegate *myDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    [request setValue:myDelegate.token forHTTPHeaderField:@"Authorization"];
     [request setHTTPMethod:@"POST"];
-    NSString* str = @"groupId=q260BmEU5cED%2bKCdYKa0RQ%3d%3d";
-    NSData* data = [str dataUsingEncoding:NSUTF8StringEncoding];
+    //NSString* str = @"groupId=q260BmEU5cED%2bKCdYKa0RQ%3d%3d";
+    NSData* data;
+    if(self.groupId != nil){
+        data = [self.groupId dataUsingEncoding:NSUTF8StringEncoding];
+    }else{
+        data= [@"groupId=q260BmEU5cED%2bKCdYKa0RQ%3d%3d" dataUsingEncoding:NSUTF8StringEncoding];
+    }
+    
     [request setHTTPBody:data];
     
     NSData* received = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
     NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:received options:kNilOptions error:nil];
     NSMutableString* html = [dict[@"data"][@"article_content"] mutableCopy];
+    NSMutableString* img_url = [dict[@"data"][@"image_url_prefix"] mutableCopy];
     
     //NSData* htmlData = [html dataUsingEncoding:NSUTF8StringEncoding];
-    
     //NSString* result = [[NSString alloc]initWithData:received encoding: NSUTF8StringEncoding];
     //修改原来的html里面的<img使得图片正常显示
+    
+    html = [self processImageOfHtml:html andImgUrl:img_url];
+    [self.webView loadHTMLString:html baseURL:nil];
+}
+
+- (void)onClickBack:(id)sender {
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+-(NSMutableString*)processImageOfHtml:(NSMutableString*) html andImgUrl:(NSMutableString*) imgUrl{
     while (true) {
-        NSMutableString* img_url = [dict[@"data"][@"image_url_prefix"] mutableCopy];
+        NSMutableString* img_url = [[NSMutableString alloc] initWithString:imgUrl];
         NSString *regex = @"<img src=\"\\{\\{[^>]+>";
         NSRange range = [html rangeOfString:regex options:NSRegularExpressionSearch];
         if(range.location == NSNotFound){
@@ -98,7 +123,6 @@
         NSString* newStr = [html substringWithRange:range];
         regex = @"\\{\"[^\\}]+\\}";
         
-        //NSLog(@"%@",NSStringFromRange(range));
         newStr = [newStr substringWithRange:[newStr rangeOfString:regex options:NSRegularExpressionSearch]];
         NSDictionary* imgDict = [NSJSONSerialization JSONObjectWithData:[newStr dataUsingEncoding:NSUTF8StringEncoding] options:kNilOptions error:nil];
         [img_url appendString: imgDict[@"web_uri"]];
@@ -106,16 +130,7 @@
         [img_url appendString:@"\">"];
         [html replaceCharactersInRange:range withString:img_url];
     }
-    
-    /*TFHpple* xpathParser = [[TFHpple alloc]initWithHTMLData:htmlData encoding:html];
-     NSArray* imgArray = [xpathParser searchWithXPathQuery:@"//img"];
-     for(TFHppleElement* element in imgArray){
-     NSLog(@"%@",element.text);
-     }*/
-    
-    
-    
-    [self.webView loadHTMLString:html baseURL:nil];
+    return html;
 }
 
 -(void)showBigImage:(NSString *)imageUrl{
@@ -128,12 +143,12 @@
     [self.view addSubview:self.bgView];
     
     //创建边框视图
-    UIView *borderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH-20, 240)];
+    UIView *borderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH-10, 380)];
     //将图层的边框设置为圆脚
     borderView.layer.cornerRadius = 8;
     borderView.layer.masksToBounds = YES;
     //给图层添加一个有色边框
-    borderView.layer.borderWidth = 8;
+    borderView.layer.borderWidth = 2;
     borderView.layer.borderColor = [[UIColor colorWithRed:0.9
                                                     green:0.9
                                                      blue:0.9
@@ -144,9 +159,11 @@
     //创建关闭按钮
     UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     //    [closeBtn setImage:[UIImage imageNamed:@"close.png"] forState:UIControlStateNormal];
-    closeBtn.backgroundColor = [UIColor redColor];
+    //scloseBtn.backgroundColor = [UIColor grayColor];
+    closeBtn.titleLabel.textAlignment = UITextAlignmentCenter;
     [closeBtn addTarget:self action:@selector(removeBigImage) forControlEvents:UIControlEventTouchUpInside];
-    [closeBtn setFrame:CGRectMake(borderView.frame.origin.x+borderView.frame.size.width-20, borderView.frame.origin.y-6, 26, 27)];
+    //[closeBtn setFrame:CGRectMake(borderView.frame.origin.x+borderView.frame.size.width-50, borderView.frame.origin.y-6, 50, 27)];
+    [closeBtn setFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
     [self.bgView addSubview:closeBtn];
     
     //创建显示图像视图
@@ -193,23 +210,6 @@
         NSLog(@"js___Error -> %@", error);
     }];
     
-    /*NSString* js2 = @"getImages()";
-     //__block NSArray* array = [NSArray array];
-     [self.webView evaluateJavaScript:js2 completionHandler:^(id Result,NSError* error){
-     NSLog(@"js2__Result==%@",Result);
-     NSLog(@"js2__Error -> %@", error);
-     
-     NSString *resurlt=[NSString stringWithFormat:@"%@",Result];
-     
-     if([resurlt hasPrefix:@"#"])
-     {
-     resurlt=[resurlt substringFromIndex:1];
-     }
-     NSLog(@"result===%@",resurlt);
-     self.array=[resurlt componentsSeparatedByString:@"#"];
-     NSLog(@"array====%@",self.array);
-     
-     }];*/
 }
 // 页面加载失败时调用
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation{

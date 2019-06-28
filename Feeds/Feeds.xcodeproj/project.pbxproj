@@ -17,6 +17,13 @@
 		CF72F40022BE2E690067C147 /* FeedsUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = CF72F3FF22BE2E690067C147 /* FeedsUITests.m */; };
 		CF72F41022BE2F540067C147 /* Detail.m in Sources */ = {isa = PBXBuildFile; fileRef = CF72F40F22BE2F540067C147 /* Detail.m */; };
 		CF72F41322BE30DB0067C147 /* MainPage.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CF72F41222BE30DB0067C147 /* MainPage.storyboard */; };
+		CFAB5F0422C5C59900DE38A1 /* RegisterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CFAB5F0322C5C59900DE38A1 /* RegisterViewController.m */; };
+		CFAB5F0922C5C5B800DE38A1 /* user.jpg in Resources */ = {isa = PBXBuildFile; fileRef = CFAB5F0622C5C5B800DE38A1 /* user.jpg */; };
+		CFAB5F0A22C5C5B800DE38A1 /* confirm.jpg in Resources */ = {isa = PBXBuildFile; fileRef = CFAB5F0722C5C5B800DE38A1 /* confirm.jpg */; };
+		CFAB5F0B22C5C5B800DE38A1 /* password.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = CFAB5F0822C5C5B800DE38A1 /* password.jpeg */; };
+		DFFEC6B622C5C75C00ACBDD8 /* UserInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = DFFEC6B522C5C75C00ACBDD8 /* UserInfo.m */; };
+		DFFEC6BA22C5C7AB00ACBDD8 /* SelectPhotoManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DFFEC6B922C5C7AB00ACBDD8 /* SelectPhotoManager.m */; };
+		DFFEC6BD22C5C7EA00ACBDD8 /* ModifyInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = DFFEC6BC22C5C7EA00ACBDD8 /* ModifyInfo.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +63,17 @@
 		CF72F40E22BE2F540067C147 /* Detail.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Detail.h; sourceTree = "<group>"; };
 		CF72F40F22BE2F540067C147 /* Detail.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Detail.m; sourceTree = "<group>"; };
 		CF72F41222BE30DB0067C147 /* MainPage.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = MainPage.storyboard; sourceTree = "<group>"; };
+		CFAB5F0222C5C59900DE38A1 /* RegisterViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RegisterViewController.h; sourceTree = "<group>"; };
+		CFAB5F0322C5C59900DE38A1 /* RegisterViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RegisterViewController.m; sourceTree = "<group>"; };
+		CFAB5F0622C5C5B800DE38A1 /* user.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = user.jpg; sourceTree = "<group>"; };
+		CFAB5F0722C5C5B800DE38A1 /* confirm.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = confirm.jpg; sourceTree = "<group>"; };
+		CFAB5F0822C5C5B800DE38A1 /* password.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = password.jpeg; sourceTree = "<group>"; };
+		DFFEC6B422C5C75C00ACBDD8 /* UserInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserInfo.h; sourceTree = "<group>"; };
+		DFFEC6B522C5C75C00ACBDD8 /* UserInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserInfo.m; sourceTree = "<group>"; };
+		DFFEC6B822C5C7AB00ACBDD8 /* SelectPhotoManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SelectPhotoManager.h; sourceTree = "<group>"; };
+		DFFEC6B922C5C7AB00ACBDD8 /* SelectPhotoManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SelectPhotoManager.m; sourceTree = "<group>"; };
+		DFFEC6BB22C5C7EA00ACBDD8 /* ModifyInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModifyInfo.h; sourceTree = "<group>"; };
+		DFFEC6BC22C5C7EA00ACBDD8 /* ModifyInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ModifyInfo.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +104,7 @@
 		CF72F3CF22BE2E680067C147 = {
 			isa = PBXGroup;
 			children = (
+				DFFEC6B322C5C73700ACBDD8 /* UserInfo */,
 				CF72F41122BE30C40067C147 /* MainPage */,
 				CF72F40D22BE2ED60067C147 /* Detail */,
 				CF72F3DA22BE2E680067C147 /* Feeds */,
@@ -108,10 +127,13 @@
 		CF72F3DA22BE2E680067C147 /* Feeds */ = {
 			isa = PBXGroup;
 			children = (
+				CFAB5F0522C5C59F00DE38A1 /* images */,
 				CF72F3DB22BE2E680067C147 /* AppDelegate.h */,
 				CF72F3DC22BE2E680067C147 /* AppDelegate.m */,
 				CF72F3DE22BE2E680067C147 /* ViewController.h */,
 				CF72F3DF22BE2E680067C147 /* ViewController.m */,
+				CFAB5F0222C5C59900DE38A1 /* RegisterViewController.h */,
+				CFAB5F0322C5C59900DE38A1 /* RegisterViewController.m */,
 				CF72F3E122BE2E680067C147 /* Main.storyboard */,
 				CF72F3E422BE2E690067C147 /* Assets.xcassets */,
 				CF72F3E622BE2E690067C147 /* LaunchScreen.storyboard */,
@@ -154,6 +176,37 @@
 				CF72F41222BE30DB0067C147 /* MainPage.storyboard */,
 			);
 			path = MainPage;
+			sourceTree = "<group>";
+		};
+		CFAB5F0522C5C59F00DE38A1 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				CFAB5F0722C5C5B800DE38A1 /* confirm.jpg */,
+				CFAB5F0822C5C5B800DE38A1 /* password.jpeg */,
+				CFAB5F0622C5C5B800DE38A1 /* user.jpg */,
+			);
+			path = images;
+			sourceTree = "<group>";
+		};
+		DFFEC6B322C5C73700ACBDD8 /* UserInfo */ = {
+			isa = PBXGroup;
+			children = (
+				DFFEC6B722C5C78400ACBDD8 /* SelectPhotoManager */,
+				DFFEC6B422C5C75C00ACBDD8 /* UserInfo.h */,
+				DFFEC6B522C5C75C00ACBDD8 /* UserInfo.m */,
+				DFFEC6BB22C5C7EA00ACBDD8 /* ModifyInfo.h */,
+				DFFEC6BC22C5C7EA00ACBDD8 /* ModifyInfo.m */,
+			);
+			path = UserInfo;
+			sourceTree = "<group>";
+		};
+		DFFEC6B722C5C78400ACBDD8 /* SelectPhotoManager */ = {
+			isa = PBXGroup;
+			children = (
+				DFFEC6B822C5C7AB00ACBDD8 /* SelectPhotoManager.h */,
+				DFFEC6B922C5C7AB00ACBDD8 /* SelectPhotoManager.m */,
+			);
+			path = SelectPhotoManager;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -260,6 +313,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF72F41322BE30DB0067C147 /* MainPage.storyboard in Resources */,
+				CFAB5F0922C5C5B800DE38A1 /* user.jpg in Resources */,
+				CFAB5F0B22C5C5B800DE38A1 /* password.jpeg in Resources */,
+				CFAB5F0A22C5C5B800DE38A1 /* confirm.jpg in Resources */,
 				CF72F3E822BE2E690067C147 /* LaunchScreen.storyboard in Resources */,
 				CF72F3E522BE2E690067C147 /* Assets.xcassets in Resources */,
 				CF72F3E322BE2E680067C147 /* Main.storyboard in Resources */,
@@ -287,9 +343,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFAB5F0422C5C59900DE38A1 /* RegisterViewController.m in Sources */,
+				DFFEC6BA22C5C7AB00ACBDD8 /* SelectPhotoManager.m in Sources */,
 				CF72F3E022BE2E680067C147 /* ViewController.m in Sources */,
+				DFFEC6BD22C5C7EA00ACBDD8 /* ModifyInfo.m in Sources */,
 				CF72F3EB22BE2E690067C147 /* main.m in Sources */,
 				CF72F41022BE2F540067C147 /* Detail.m in Sources */,
+				DFFEC6B622C5C75C00ACBDD8 /* UserInfo.m in Sources */,
 				CF72F3DD22BE2E680067C147 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

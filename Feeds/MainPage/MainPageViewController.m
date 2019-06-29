@@ -4,6 +4,7 @@
 #import "News.h"
 #import "AppDelegate.h"
 #import "DetailPage.h"
+#import "HeaderCell.h"
 
 @interface MainPageViewController () <UITableViewDelegate, UITableViewDataSource>
 
@@ -19,14 +20,16 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    CGRect screenRect = [UIScreen mainScreen].bounds;/*
-    self.selectView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenRect.size.width, 50) style:UITableViewStylePlain];
-    [self.selectView setBackgroundColor: [UIColor grayColor]];
+    CGRect screenRect = [UIScreen mainScreen].bounds;
+    self.selectView = [[UITableView alloc] initWithFrame:CGRectMake(190, -100, 25, screenRect.size.width) style:UITableViewStylePlain];
+    self.selectView.separatorInset = UIEdgeInsetsZero;
+    self.selectView.showsVerticalScrollIndicator = NO;
+    [self.selectView setTransform:CGAffineTransformMakeRotation(-M_PI/2)];
     self.selectView.delegate = self;
     self.selectView.dataSource = self;
-    [self.view addSubview:self.selectView];*/
+    [self.view addSubview:self.selectView];
     
-    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 50, screenRect.size.width, screenRect.size.height - 50) style:UITableViewStylePlain];
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(-15, 130, screenRect.size.width, screenRect.size.height - 50) style:UITableViewStylePlain];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     [self.view addSubview:self.tableView];
@@ -88,20 +91,37 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    if (tableView == self.selectView) {
+        return 12;
+    } else {
         return self.arrayDS.count;
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSLog(@"222");
     if (tableView == self.selectView) {
-        SingleImgCell * cell = [tableView dequeueReusableCellWithIdentifier:@"SIC"];
+        HeaderCell * cell = [tableView dequeueReusableCellWithIdentifier:@"HC"];
         if (cell == nil) {
-            cell = [[SingleImgCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"SIC"];
+            cell = [[HeaderCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"HC"];
         }
-        cell.title.text = @"QwQ";
+        switch (indexPath.row) {
+            case 0:cell.title.text = @"关注";break;
+            case 1:cell.title.text = @"推荐";break;
+            case 2:cell.title.text = @"生活";break;
+            case 3:cell.title.text = @"游戏";break;
+            case 4:cell.title.text = @"娱乐";break;
+            case 5:cell.title.text = @"军事";break;
+            case 6:cell.title.text = @"动漫";break;
+            case 7:cell.title.text = @"科学";break;
+            case 8:cell.title.text = @"宠物";break;
+            case 9:cell.title.text = @"奇闻";break;
+            case 10:cell.title.text = @"旅游";break;
+            case 11:cell.title.text = @"自然";break;
+            default:break;
+        }
+        cell.title.transform = CGAffineTransformMakeRotation(M_PI/2);
         return cell;
     } else {
-        NSLog(@"111");
         if ([[self.arrayDS objectAtIndex:indexPath.row] imgNum] == 1){
             SingleImgCell * cell = [tableView dequeueReusableCellWithIdentifier:@"SIC"];
             if (cell == nil) {
@@ -148,6 +168,9 @@
  *  设置单元格的高度
  */
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (tableView == self.selectView) {
+        return 52.0f;
+    } else {
         if ([[self.arrayDS objectAtIndex:indexPath.row] imgNum] == 0) {
             return 60.0f;
         } else if ([[self.arrayDS objectAtIndex:indexPath.row] imgNum] == 1) {
@@ -155,7 +178,7 @@
         } else {
             return 185.0f;
         }
-    
+    }
 }
 
 

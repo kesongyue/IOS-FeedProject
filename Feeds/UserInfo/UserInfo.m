@@ -10,6 +10,7 @@
 #import "SelectPhotoManager.h"
 #import "ModifyInfo.h"
 #import "AppDelegate.h"
+#import <AFNetworking/AFNetworking.h>
 
 @interface UserInfo () <UITableViewDelegate, UITableViewDataSource>
 
@@ -94,13 +95,13 @@
             if (myStatus == 200){
                 NSLog(@"upload succeed");
             }else if (myStatus == 400){
-                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"消息提示" message:@"参数错误" preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"参数错误" message:@"" preferredStyle:UIAlertControllerStyleAlert];
                 [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
                     NSLog(@"点击取消");
                 }]];
                 [self presentViewController:alertController animated:YES completion:nil];
             }else if (myStatus == 401){
-                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"消息提示" message:@"登录信息已过期" preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"登录信息已过期" message:@"" preferredStyle:UIAlertControllerStyleAlert];
                 [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
                     NSLog(@"点击取消");
                 }]];
@@ -161,7 +162,6 @@
     _btn1.titleLabel.textAlignment = NSTextAlignmentCenter;
     _btn1.titleLabel.font = [UIFont systemFontOfSize:19.f];
     _btn1.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
-    [_btn1 addTarget:self action:@selector(payClick) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_btn1];
     
     _btn2 = [[UIButton alloc] initWithFrame:CGRectMake(105, 200, 100, 70)];
@@ -243,13 +243,13 @@
             NSLog(@"成功获取信息");
             [self setup];
         }else if (myStatus == 400){
-            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"消息提示" message:@"参数错误" preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"参数错误" message:@"" preferredStyle:UIAlertControllerStyleAlert];
             [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
                 NSLog(@"点击取消");
             }]];
             [self presentViewController:alertController animated:YES completion:nil];
         }else if (myStatus == 401){
-            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"消息提示" message:@"登录信息已过期" preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"登录信息已过期" message:@"" preferredStyle:UIAlertControllerStyleAlert];
             [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
                 NSLog(@"点击取消");
             }]];
@@ -258,35 +258,6 @@
     }];
     
     [dataTask resume];
-}
-
-- (void)payClick{
-    /*UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"提示" message:@"请输入个人信息" preferredStyle:UIAlertControllerStyleAlert];
-     //增加确定按钮；
-     [alertController addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-     //获取第1个输入框；
-     UITextField *userNameTextField = alertController.textFields.firstObject;
-     
-     //获取第2个输入框；
-     UITextField *passwordTextField = alertController.textFields.lastObject;
-     
-     NSLog(@"用户名 = %@，密码 = %@",userNameTextField.text,passwordTextField.text);
-     
-     }]];
-     
-     //增加取消按钮；
-     [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault handler:nil]];
-     
-     //定义第一个输入框；
-     [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
-     textField.placeholder = @"请输入用户名";
-     }];
-     //定义第二个输入框；
-     [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
-     textField.placeholder = @"请输入密码";
-     }];
-     
-     [self presentViewController:alertController animated:true completion:nil];*/
 }
 
 //头像点击事件
@@ -311,44 +282,42 @@
 }
 
 -(void)upLoadImage:(UIImage *)image{
-    NSURLSessionConfiguration * defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
-    NSURLSession * delegateFreeSession = [NSURLSession sessionWithConfiguration:defaultConfigObject delegate:nil delegateQueue:[NSOperationQueue mainQueue]];
-    
     AppDelegate *myDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    NSURL * url = [NSURL URLWithString:@"http://happyzhier.club:3000/image"];
-    NSMutableURLRequest * request = [[NSMutableURLRequest alloc]initWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10];
-    //[request setValue:myDelegate.token forHTTPHeaderField:@"Authorization"];
-    //[request setValue:@"image/jpeg" forHTTPHeaderField:@"Content-Type"];
-    [request setHTTPMethod:@"POST"];
-    NSData *data = UIImagePNGRepresentation(image);
-    [request setHTTPBody:data];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    manager.requestSerializer.timeoutInterval = 20;
+    manager.responseSerializer = [[AFHTTPResponseSerializer alloc] init];
+    [manager.requestSerializer setValue:myDelegate.token forHTTPHeaderField:@"Authorization"];
+    NSString *URLSTR = @"http://hw.mikualpha.cn/avatar_upload.php";
     
-    NSURLSessionDataTask *dataTask = [delegateFreeSession dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error){
-        NSString* jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    [manager POST:URLSTR parameters:nil constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+        
+        NSData *imagedata = UIImagePNGRepresentation(image);
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        // 设置时间格式
+        [formatter setDateFormat:@"yyyyMMddHHmmss"];
+        NSString *dateString = [formatter stringFromDate:[NSDate date]];
+        NSString *fileName = [NSString  stringWithFormat:@"%@.png", dateString];
+        //按照表单格式把二进制文件写入formData表单
+        [formData appendPartWithFileData:imagedata name:@"file" fileName:fileName mimeType:@"image/png"];
+        
+    } progress:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+        //NSLog(@"成功%@", responseObject);
+        NSString* jsonString = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
         NSData* jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
         NSDictionary* dic = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableLeaves error:nil];
         NSNumber* status = [dic objectForKey:@"status"];
-        NSLog(@"jsonString%@", jsonString);
-        NSLog(@"error%@", error);
         int myStatus = [status intValue];
-        if (myStatus == 200){
-            NSLog(@"upload succeed");
-        }else if (myStatus == 400){
-            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"消息提示" message:@"参数错误" preferredStyle:UIAlertControllerStyleAlert];
-            [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-                NSLog(@"点击取消");
-            }]];
-            [self presentViewController:alertController animated:YES completion:nil];
-        }else if (myStatus == 401){
-            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"消息提示" message:@"登录信息已过期" preferredStyle:UIAlertControllerStyleAlert];
+        if(myStatus == 200){
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"更换头像成功" message:@"" preferredStyle:UIAlertControllerStyleAlert];
             [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
                 NSLog(@"点击取消");
             }]];
             [self presentViewController:alertController animated:YES completion:nil];
         }
+        //NSLog(@"成功");
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+        NSLog(@"上传失败%@", error);
     }];
-    
-    [dataTask resume];
 }
 
 
@@ -403,7 +372,7 @@
      NSString *str2 = _items[indexPath.section * 2 + indexPath.row];
      NSString *str3 = [NSString stringWithFormat:@"%@%@", str1, str2];*/
     NSString *info = _items[indexPath.section * 2 + indexPath.row];
-    _whichnum = indexPath.section * 2 + indexPath.row;
+    _whichnum = (int)(indexPath.section * 2 + indexPath.row);
     ModifyInfo *controller = [[ModifyInfo alloc] initWithInfo:info];
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:controller];
     dispatch_async(dispatch_get_main_queue(), ^{

@@ -57,9 +57,10 @@
 
 
 @implementation DetailPage
--(instancetype)initWithGroupId:(NSString*)group_id{
+-(instancetype)initWithGroupId:(NSString*)group_id andTitle:(NSString *)title_{
     if(self = [super init]){
         self.groupId = group_id;
+        self.titleText = title_;
     }
     return self;
 }
@@ -67,6 +68,17 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"< Back" style:UIBarButtonItemStylePlain target:self action:@selector(onClickBack:)];
+    //标题
+    self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 80, self.view.frame.size.width, 70)];
+    self.titleLabel.text = self.titleText;
+    
+    self.titleLabel.textColor = [UIColor blackColor];
+    self.titleLabel.backgroundColor = [UIColor whiteColor];
+    self.titleLabel.textAlignment = NSTextAlignmentLeft;
+    self.titleLabel.numberOfLines = 2;
+    self.titleLabel.font = [UIFont boldSystemFontOfSize:18];
+    [self.view addSubview:self.titleLabel];
+    
     //使图片居中
     NSString* jScript = @"var meta = document.createElement('meta'); meta.setAttribute('name', 'viewport'); meta.setAttribute('content', 'width=device-width'); document.getElementsByTagName('head')[0].appendChild(meta); var imgs = document.getElementsByTagName('img');for (var i in imgs){imgs[i].style.maxWidth='100%';imgs[i].style.height='auto';}";
     WKUserScript* wkUScript = [[WKUserScript alloc]initWithSource:jScript injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES];
@@ -75,12 +87,12 @@
     
     WKWebViewConfiguration * config = [[WKWebViewConfiguration alloc]init];
     config.userContentController = wkUc;
-    self.webView = [[WKWebView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height-40) configuration:config];
+    self.webView = [[WKWebView alloc]initWithFrame:CGRectMake(0, 150, self.view.frame.size.width, self.view.frame.size.height) configuration:config];
     //[self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.baidu.com"]]];
     self.webView.navigationDelegate = self;
     [self.view addSubview:_webView];
     
-    NSURL* url = [NSURL URLWithString:@"https://i.snssdk.com/course/article_content"];
+    NSURL* url = [NSURL URLWithString:@"http://hw.mikualpha.cn/article_content.php"];
     NSMutableURLRequest* request = [[NSMutableURLRequest alloc]initWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10];
     AppDelegate *myDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     [request setValue:myDelegate.token forHTTPHeaderField:@"Authorization"];
@@ -88,8 +100,6 @@
     //NSLog(@"%@",[@"groupId=q260BmEU5cED%2bKCdYKa0RQ==" stringByAddingPercentEscapesUsingEncoding:kCFStringEncodingASCII]);
     NSMutableString* str = [[NSMutableString alloc] initWithString:@"groupId="];
     [str appendString:self.groupId];
-    //[str appendString:@"%3d%3d"];
-    NSLog(@"%@",str);
     NSData* data;
     if(self.groupId != nil){
         data = [str dataUsingEncoding:NSUTF8StringEncoding];
@@ -99,18 +109,26 @@
     [request setValue: @"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
     [request setHTTPBody:data];
     
-    NSData* received = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
-    NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:received options:kNilOptions error:nil];
-    NSMutableString* html = [dict[@"data"][@"article_content"] mutableCopy];
-    NSMutableString* img_url = [dict[@"data"][@"image_url_prefix"] mutableCopy];
+    NSURLSessionConfiguration * sessionConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
+    NSURLSession * delegateSession = [NSURLSession sessionWithConfiguration:sessionConfigObject delegate:nil delegateQueue:[NSOperationQueue mainQueue]];
+    NSURLSessionDataTask * sessionDataTask = [delegateSession dataTaskWithRequest:request completionHandler:^(NSData *  data, NSURLResponse *  response, NSError *  error) {
+        if (error == nil) {
+            NSData* received = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
+            NSDictionary* dict = [NSJSONSerialization JSONObjectWithData:received options:kNilOptions error:nil];
+            if([dict[@"status"] intValue]== 200){
+                 NSMutableString* html = [dict[@"data"][@"article_content"] mutableCopy];
+                 NSMutableString* img_url = [dict[@"data"][@"image_url_prefix"] mutableCopy];
+                
+                //修改原来的html里面的<img使得图片正常显示
+                html = [self processImageOfHtml:html andImgUrl:img_url];
+                [self.webView loadHTMLString:html baseURL:nil];
+            }
+        }
+    }];
+    [sessionDataTask resume];
     
     //NSData* htmlData = [html dataUsingEncoding:NSUTF8StringEncoding];
     //NSString* result = [[NSString alloc]initWithData:received encoding: NSUTF8StringEncoding];
-    //修改原来的html里面的<img使得图片正常显示
-    
-    html = [self processImageOfHtml:html andImgUrl:img_url];
-    [self.webView loadHTMLString:html baseURL:nil];
-    
     
     //点赞
     self.giveLike = false;
@@ -118,13 +136,13 @@
     self.beforelike = [UIImage imageNamed:@"beforelike.jpeg"];
     self.afterlike = [UIImage imageNamed:@"afterlike.jpeg"];
     self.likeIcon = [[UIButton alloc] init];
-    self.likeIcon.frame = CGRectMake(130, 152, 30, 30);
+    self.likeIcon.frame = CGRectMake(self.view.frame.size.width-80, 120, 30, 30);
     [self.likeIcon setBackgroundImage:self.beforelike forState:UIControlStateNormal];
     [self.likeIcon addTarget:self action:@selector(likeButtonOnClick:) forControlEvents:UIControlEventTouchDown];
     [self.view addSubview:self.likeIcon];
     
     self.likeNum = [[UITextView alloc] init];
-    self.likeNum.frame = CGRectMake(170, 152, 50, 30);
+    self.likeNum.frame = CGRectMake(self.view.frame.size.width-50, 120, 50, 30);
     [self.likeNum setEditable:NO];
     [self.view addSubview:self.likeNum];
     
@@ -133,17 +151,26 @@
     NSURLSession *delegateFreeSession = [NSURLSession sessionWithConfiguration:defaultConfigObj
                                                                       delegate:self
                                                                  delegateQueue:[NSOperationQueue mainQueue]];
-    NSURL *url_ = [NSURL URLWithString:@"http://hw.mikualpha.cn/like.php"];
+    
+    NSMutableString* strstr = [[NSMutableString alloc] initWithString:@"http://hw.mikualpha.cn/like.php?id="];
+    [strstr appendString:self.groupId];
+    NSURL *url_ = [NSURL URLWithString:strstr];
     NSMutableURLRequest * request_ = [[NSMutableURLRequest alloc]initWithURL:url_ cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10];
     [request_ setValue:myDelegate.token forHTTPHeaderField:@"Authorization"];
+    //NSString *params = [NSString stringWithFormat:@"id=%@",self.groupId];
+    
+    [request_ setValue: @"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
     [request_ setHTTPMethod:@"GET"];
+    //[request_ setHTTPBody: [params dataUsingEncoding:NSUTF8StringEncoding]];
     NSURLSessionDataTask *dataTask = [delegateFreeSession dataTaskWithRequest:request_ completionHandler:^(NSData *data, NSURLResponse *response, NSError *error){
+        if(error == nil){
             NSString* jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
             NSData* jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
             NSDictionary* dic = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableLeaves error:nil];
             NSNumber* status = [dic objectForKey:@"status"];
             int myStatus = [status intValue];
-            
+           // NSLog(@"Staus:%d",myStatus);
+            //NSLog(@"%@",data);
             if (myStatus == 200){
                 NSDictionary* dataDic = [dic objectForKey:@"data"];
                 NSNumber* count = [dataDic objectForKey:@"count"];
@@ -151,7 +178,9 @@
             }else{
                 self.likeNum.text = @"0";
             }
-        }];
+        }
+        NSLog(@"error:%@",error);
+    }];
     
     [dataTask resume];
 }
@@ -254,8 +283,8 @@
     //调用自定义js
     //用js获取全部图片
     [self.webView evaluateJavaScript:jsGetImages completionHandler:^(id Result, NSError * error) {
-        NSLog(@"js___Result==%@",Result);
-        NSLog(@"js___Error -> %@", error);
+       // NSLog(@"js___Result==%@",Result);
+       //NSLog(@"js___Error -> %@", error);
     }];
     
 }
@@ -285,14 +314,15 @@
     if([requestString hasPrefix:@"myweb:imageClick:"]){
         NSString *imageUrl = [requestString substringFromIndex:@"myweb:imageClick:".length];
         NSLog(@"image url------%@", imageUrl);
-        if(self.bgView){
+        /*if(self.bgView){
             //设置不隐藏，还原放大缩小，显示图片
             self.bgView.hidden = NO;
             self.imgView.frame = CGRectMake(10, 10, SCREEN_WIDTH-40, 220);
             [self.imgView setImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:imageUrl]]]];
         }else{
             [self showBigImage:imageUrl];
-        }
+        }*/
+        [self showBigImage:imageUrl];
     }
     decisionHandler(WKNavigationActionPolicyAllow);
 }
@@ -322,7 +352,7 @@
         request.HTTPMethod = @"PUT";
         AppDelegate *myDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
         [request setValue:myDelegate.token forHTTPHeaderField:@"Authorization"];
-        NSString *params = [NSString stringWithFormat:@"id=777"];
+        NSString *params = [NSString stringWithFormat:@"id=%@",self.groupId];
         request.HTTPBody = [params dataUsingEncoding:NSUTF8StringEncoding];
         
         NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
@@ -364,7 +394,7 @@
         request.HTTPMethod = @"DELETE";
         AppDelegate *myDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
         [request setValue:myDelegate.token forHTTPHeaderField:@"Authorization"];
-        NSString *params = [NSString stringWithFormat:@"id=777"];
+        NSString *params = [NSString stringWithFormat:@"id=%@",self.groupId];
         request.HTTPBody = [params dataUsingEncoding:NSUTF8StringEncoding];
         
         NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];

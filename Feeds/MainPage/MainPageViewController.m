@@ -164,7 +164,7 @@
  */
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (tableView == self.tableView) {
-     DetailPage* detailPage = [[DetailPage alloc]initWithGroupId:[[self.arrayDS objectAtIndex:indexPath.row] group_id]];
+     DetailPage* detailPage = [[DetailPage alloc]initWithGroupId:[[self.arrayDS objectAtIndex:indexPath.row] group_id] andTitle:[[self.arrayDS objectAtIndex:indexPath.row] title]];
     NSLog(@"%@",[[self.arrayDS objectAtIndex:indexPath.row] group_id]);
      UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:detailPage];
      dispatch_async(dispatch_get_main_queue(), ^{

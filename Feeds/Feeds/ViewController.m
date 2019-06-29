@@ -101,6 +101,7 @@
         NSDictionary* dic = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableLeaves error:nil];
         NSNumber* status = [dic objectForKey:@"status"];
         int myStatus = [status intValue];
+        NSLog(@"%d",myStatus);
         if (myStatus == 200){
             NSDictionary* dataDic = [dic objectForKey:@"data"];
             AppDelegate *myDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
@@ -124,7 +125,12 @@
                 NSLog(@"点击取消");
             }]];
             [self presentViewController:alertController animated:YES completion:nil];
-        }
+        }else{
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"消息提示" message:@"用户名或密码错误" preferredStyle:UIAlertControllerStyleAlert];
+            [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+                NSLog(@"点击取消");
+            }]];
+            [self presentViewController:alertController animated:YES completion:nil];        }
         
         
     }];

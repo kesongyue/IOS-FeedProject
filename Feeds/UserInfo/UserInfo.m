@@ -262,6 +262,7 @@
 
 //头像点击事件
 -(void)tapClick:(UITapGestureRecognizer *)recognizer{
+    NSLog(@"log");
     
     if (!_photoManager) {
         _photoManager =[[SelectPhotoManager alloc]init];

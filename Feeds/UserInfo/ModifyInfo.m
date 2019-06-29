@@ -43,11 +43,15 @@
 }
 
 - (IBAction)notificationMethod:(id)sender {
-    if (_textField.text != @"") {
+    if (_textField.text.length != 0) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"ChangeNameNotification" object:self userInfo:@{@"name":_textField.text}];
         [self dismissViewControllerAnimated:YES completion:nil];
     }else{
-        
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"信息不能为空" message:@"" preferredStyle:UIAlertControllerStyleAlert];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+            NSLog(@"点击取消");
+        }]];
+        [self presentViewController:alertController animated:YES completion:nil];
     }
 }
 

@@ -10,7 +10,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Item 2-->
+        <!--个人信息-->
         <scene sceneID="Eq0-j7-9I4">
             <objects>
                 <viewController id="bM0-iZ-H4A" customClass="UserInfo" sceneMemberID="viewController">
@@ -20,13 +20,13 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="Y3Y-o7-JUQ"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Item 2" id="jRX-wY-tOo"/>
+                    <tabBarItem key="tabBarItem" title="个人信息" id="jRX-wY-tOo"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aAJ-rd-SIv" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="150" y="179"/>
         </scene>
-        <!--Item 1-->
+        <!--主页-->
         <scene sceneID="yE2-41-FgO">
             <objects>
                 <viewController id="gGo-Uj-2Cc" customClass="MainPageViewController" sceneMemberID="viewController">
@@ -36,7 +36,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="HQZ-yI-ElY"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Item 1" id="Nag-Qf-wgp"/>
+                    <tabBarItem key="tabBarItem" title="主页" id="Nag-Qf-wgp"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="N9m-GI-6bV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

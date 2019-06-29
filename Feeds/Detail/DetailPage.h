@@ -19,6 +19,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UIImageView* imgView;
 @property (nonatomic, strong) NSString* groupId;
 
+@property (strong, nonatomic) UIButton *likeIcon;
+@property (strong, nonatomic) UITextView *likeNum;
+@property (retain, nonatomic) UIImage *beforelike;
+@property (retain, nonatomic) UIImage *afterlike;
+@property Boolean giveLike;
+
 -(instancetype)initWithGroupId:(NSString*)group_id;
 @end
 

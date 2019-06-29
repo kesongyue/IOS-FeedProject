@@ -118,11 +118,19 @@
             AppDelegate *myDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
             myDelegate.token = [dataDic objectForKey:@"token"];
             NSLog(@"%@", myDelegate.token);
-            //跳转到新闻首页
-            UIStoryboard *secondStoryBoard = [UIStoryboard storyboardWithName:@"MainPage" bundle:nil];
+            
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"消息提示" message:@"成功注册用户" preferredStyle:UIAlertControllerStyleAlert];
+            [alertController addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+                //跳转到登录页面
+                [self dismissViewControllerAnimated:YES completion:nil];
+            }]];
+            [self presentViewController:alertController animated:YES completion:nil];
+            
+            
+            /*UIStoryboard *secondStoryBoard = [UIStoryboard storyboardWithName:@"MainPage" bundle:nil];
             id detailVC = [secondStoryBoard instantiateViewControllerWithIdentifier:@"Main"];
             [self.navigationController pushViewController:detailVC animated:YES];
-            NSLog(@"%@",self.navigationController);
+            NSLog(@"%@",self.navigationController);*/
             
         }else if (myStatus == 400){
             [self presentViewController:alertController animated:YES completion:nil];

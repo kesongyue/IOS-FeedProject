@@ -29,7 +29,7 @@
     self.selectView.dataSource = self;
     [self.view addSubview:self.selectView];
     
-    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(-15, 130, screenRect.size.width, screenRect.size.height - 50) style:UITableViewStylePlain];
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(-15, 130, screenRect.size.width, screenRect.size.height - 150) style:UITableViewStylePlain];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     [self.view addSubview:self.tableView];

@@ -7,10 +7,10 @@
     if (self) {
         self.layoutMargins = UIEdgeInsetsZero;
         
-        self.title = [[UILabel alloc]  initWithFrame:CGRectMake(0, 00, self.frame.size.width, 50)];
+        self.title = [[UILabel alloc]  initWithFrame:CGRectMake(-8, 8, 40, 40)];
         self.title.numberOfLines = 1;
         self.title.textAlignment = NSTextAlignmentLeft;
-        self.title.font = [UIFont boldSystemFontOfSize:16];
+        self.title.font = [UIFont boldSystemFontOfSize:18];
         self.title.textColor = [UIColor blackColor];
         self.title.backgroundColor = [UIColor whiteColor];
         [self.contentView addSubview:self.title];

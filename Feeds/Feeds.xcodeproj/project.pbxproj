@@ -131,7 +131,6 @@
 				543EB99A2BA1E3ED23457842 /* Pods-Feeds.debug.xcconfig */,
 				0BE1A0A99DBA9C84B7F9ABF5 /* Pods-Feeds.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
